@@ -28,7 +28,7 @@
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="blog.php">Blog</a></li>
                         <li class="mb-2"><a href="faq.php">FAQ</a></li>
-                        <li class="mb-2"><a href="#">Support</a></li>
+                        <li class="mb-2"><a href="support.php">Support</a></li>
                         <li class="mb-2"><a href="contact.php">Contact Us</a></li>
                         <li class="mb-2"><a href="#">Privacy Policy</a></li>
                     </ul>
