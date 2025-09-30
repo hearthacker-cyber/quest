@@ -1,0 +1,721 @@
+/* Student Profile Page Specific Styles */
+
+
+/* Profile Hero Section */
+
+.profile-hero {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+    color: white;
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23fec53a" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,197.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+    background-size: cover;
+    background-position: center;
+    animation: wave 10s linear infinite;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.avatar {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    object-fit: cover;
+}
+
+.online-status {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    background: #27ae60;
+    border: 3px solid white;
+    border-radius: 50%;
+}
+
+.profile-info h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.student-grade {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 15px;
+}
+
+.badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-primary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.badge-success {
+    background: rgba(46, 204, 113, 0.2);
+    color: #27ae60;
+    border: 1px solid #27ae60;
+}
+
+.badge-warning {
+    background: rgba(241, 196, 15, 0.2);
+    color: #f1c40f;
+    border: 1px solid #f1c40f;
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.lottie-animation {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+
+/* Profile Content Section */
+
+.profile-content {
+    padding: 80px 0;
+    background: var(--light-bg);
+}
+
+
+/* Profile Sidebar */
+
+.profile-sidebar {
+    position: sticky;
+    top: 100px;
+}
+
+.sidebar-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.sidebar-card h5 {
+    color: var(--dark-blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+
+/* Quick Stats */
+
+.quick-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.quick-stat {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: var(--light-bg);
+    border-radius: 10px;
+}
+
+.quick-stat i {
+    font-size: 1.5rem;
+    width: 30px;
+    text-align: center;
+}
+
+.quick-stat .value {
+    font-weight: 700;
+    color: var(--dark-blue);
+    font-size: 1.1rem;
+}
+
+.quick-stat .label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+
+/* Achievements List */
+
+.achievements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: var(--light-bg);
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.achievement-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.achievement-info {
+    flex: 1;
+}
+
+.achievement-title {
+    font-weight: 700;
+    color: var(--dark-blue);
+    margin-bottom: 2px;
+}
+
+.achievement-desc {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.achievement-date {
+    font-size: 0.7rem;
+    color: #999;
+}
+
+
+/* Goals List */
+
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.goal-item {
+    padding: 15px;
+    background: var(--light-bg);
+    border-radius: 10px;
+}
+
+.goal-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.goal-progress .progress {
+    flex: 1;
+    height: 6px;
+}
+
+.goal-progress span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    min-width: 35px;
+}
+
+.goal-info .goal-title {
+    font-weight: 600;
+    color: var(--dark-blue);
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.goal-info .goal-subtitle {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+
+/* Content Sections */
+
+.content-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.section-header h3 {
+    color: var(--dark-blue);
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.time-filter .form-select {
+    width: auto;
+    min-width: 150px;
+}
+
+
+/* Performance Cards */
+
+.performance-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.performance-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    border-radius: 15px;
+    background: var(--light-bg);
+    transition: all 0.3s;
+}
+
+.performance-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.performance-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.performance-icon.math {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.performance-icon.reading {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.performance-icon.science {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.performance-icon.logic {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.performance-info {
+    flex: 1;
+}
+
+.performance-title {
+    font-weight: 600;
+    color: var(--dark-blue);
+    margin-bottom: 5px;
+}
+
+.performance-score {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--dark-blue);
+    margin-bottom: 5px;
+}
+
+.performance-trend {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.performance-trend.up {
+    color: #27ae60;
+}
+
+.performance-trend.down {
+    color: #e74c3c;
+}
+
+
+/* Progress Charts */
+
+.progress-charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.chart-container {
+    background: var(--light-bg);
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-header h6 {
+    color: var(--dark-blue);
+    font-weight: 700;
+    margin: 0;
+}
+
+.chart-header span {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: end;
+    gap: 15px;
+    height: 200px;
+    padding: 20px 0;
+}
+
+.chart-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.bar-fill {
+    width: 100%;
+    background: linear-gradient(to top, var(--primary-blue), var(--accent-purple));
+    border-radius: 5px 5px 0 0;
+    min-height: 20px;
+    transition: height 0.3s ease;
+}
+
+.chart-bar span {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 600;
+}
+
+
+/* Activity Timeline */
+
+.activity-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+    background: var(--light-bg);
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.activity-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.activity-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.activity-icon.completed {
+    background: #27ae60;
+}
+
+.activity-icon.earned {
+    background: #f39c12;
+}
+
+.activity-icon.studied {
+    background: #3498db;
+}
+
+.activity-icon.test {
+    background: #9b59b6;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    font-weight: 700;
+    color: var(--dark-blue);
+    margin-bottom: 5px;
+}
+
+.activity-desc {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+
+/* Upcoming Goals */
+
+.upcoming-goals {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.goal-card {
+    padding: 25px;
+    background: var(--light-bg);
+    border-radius: 15px;
+    border-left: 4px solid var(--primary-yellow);
+}
+
+.goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.goal-header h6 {
+    color: var(--dark-blue);
+    font-weight: 700;
+    margin: 0;
+}
+
+.goal-due {
+    font-size: 0.8rem;
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.goal-card p {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.goal-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.goal-progress .progress {
+    flex: 1;
+    height: 6px;
+}
+
+.goal-progress span {
+    font-size: 0.8rem;
+    color: #666;
+    min-width: 80px;
+    text-align: right;
+}
+
+
+/* Profile CTA Section */
+
+.profile-cta {
+    padding: 60px 0;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+    color: white;
+}
+
+.profile-cta h3 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.profile-cta p {
+    opacity: 0.9;
+    margin: 0;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+
+/* Animations */
+
+@keyframes wave {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-30px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .profile-hero {
+        padding: 100px 0 60px;
+        text-align: center;
+    }
+    .avatar-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    .profile-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .performance-cards {
+        grid-template-columns: 1fr;
+    }
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    .chart-bars {
+        gap: 8px;
+        height: 150px;
+    }
+    .cta-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    .cta-buttons .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-info h1 {
+        font-size: 2rem;
+    }
+    .stat-item {
+        padding: 15px;
+    }
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    .content-section {
+        padding: 20px;
+    }
+    .performance-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .activity-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .goal-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}

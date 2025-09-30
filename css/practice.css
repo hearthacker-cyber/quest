@@ -1,0 +1,537 @@
+/* Practice Page Specific Styles */
+
+
+/* Practice Hero Section */
+
+.practice-hero {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+    color: white;
+    padding: 150px 0 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.practice-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23fec53a" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,197.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+    background-size: cover;
+    background-position: center;
+    animation: wave 10s linear infinite;
+}
+
+.practice-hero-image {
+    position: relative;
+    animation: float 6s ease-in-out infinite;
+}
+
+.practice-stats .col-4 {
+    text-align: center;
+}
+
+.practice-stats h4 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.practice-stats p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+
+/* Current Question Section */
+
+.current-question-section {
+    padding: 80px 0;
+    background: var(--light-bg);
+}
+
+
+/* Question Progress */
+
+.question-progress {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.progress {
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+
+/* Question Card */
+
+.question-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    border-left: 5px solid var(--primary-blue);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--light-bg);
+}
+
+.question-header h3 {
+    color: var(--dark-blue);
+    font-weight: 700;
+    margin: 0;
+}
+
+.difficulty-badge {
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.difficulty-badge.easy {
+    background: rgba(46, 204, 113, 0.2);
+    color: #27ae60;
+    border: 1px solid #27ae60;
+}
+
+.difficulty-badge.medium {
+    background: rgba(241, 196, 15, 0.2);
+    color: #f39c12;
+    border: 1px solid #f39c12;
+}
+
+.difficulty-badge.hard {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+.question-text {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--dark-blue);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+
+/* Analogy Container */
+
+.analogy-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.analogy-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.image-box {
+    text-align: center;
+    padding: 25px;
+    border: 2px dashed #ddd;
+    border-radius: 15px;
+    min-width: 140px;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    background: white;
+}
+
+.image-box:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-5px);
+}
+
+.answer-box {
+    background: var(--light-bg);
+    border-style: solid;
+    border-color: var(--primary-blue);
+}
+
+.relationship-arrow {
+    font-size: 2rem;
+    color: var(--primary-blue);
+}
+
+.image-label {
+    margin-top: 15px;
+    font-weight: 600;
+    color: var(--dark-blue);
+    font-size: 0.9rem;
+}
+
+.question-mark {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+
+
+/* Answer Options */
+
+.answer-options {
+    margin-top: 30px;
+}
+
+.answer-options h5 {
+    color: var(--dark-blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.option-item {
+    padding: 25px 20px;
+    border: 2px solid #ddd;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: white;
+}
+
+.option-item:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.option-item[data-correct="true"] {
+    border-color: var(--primary-yellow);
+    background: rgba(254, 197, 58, 0.1);
+}
+
+.option-item.selected {
+    border-color: var(--primary-blue);
+    background: var(--light-blue);
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(68, 173, 229, 0.3);
+}
+
+
+/* Question Navigation */
+
+.question-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+}
+
+
+/* Practice Sidebar */
+
+.practice-sidebar {
+    position: sticky;
+    top: 100px;
+}
+
+.sidebar-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.sidebar-card h5 {
+    color: var(--dark-blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+
+/* Session Stats */
+
+.session-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-item i {
+    color: var(--primary-blue);
+    width: 20px;
+    text-align: center;
+}
+
+.stat-item span {
+    color: var(--dark-text);
+}
+
+.stat-item strong {
+    color: var(--dark-blue);
+}
+
+
+/* Action Buttons */
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-buttons .btn {
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+}
+
+
+/* Progress Overview */
+
+.progress-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.progress-item {
+    margin-bottom: 15px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.progress-label {
+    font-weight: 600;
+    color: var(--dark-blue);
+    font-size: 0.9rem;
+}
+
+.progress-value {
+    font-weight: 700;
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+
+.progress-fill.easy {
+    background: var(--primary-yellow);
+}
+
+.progress-fill.medium {
+    background: var(--primary-blue);
+}
+
+.progress-fill.hard {
+    background: var(--accent-purple);
+}
+
+
+/* Practice Features Section */
+
+.practice-features {
+    padding: 100px 0;
+    background: white;
+}
+
+
+/* Correct Badge Styles */
+
+.correct-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #27ae60;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    animation: bounce 0.5s ease;
+    z-index: 10;
+}
+
+.correct-highlight {
+    border-color: #27ae60 !important;
+    background: rgba(39, 174, 96, 0.1) !important;
+    transform: scale(1.05);
+}
+
+
+/* Alert Styles */
+
+.practice-alert {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    min-width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Animations */
+
+@keyframes bounce {
+    0%,
+    20%,
+    60%,
+    100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    80% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes wave {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-30px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .practice-hero {
+        padding: 120px 0 60px;
+        text-align: center;
+    }
+    .question-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    .analogy-pair {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .relationship-arrow {
+        transform: rotate(90deg);
+    }
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+    .question-navigation {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .question-navigation .btn {
+        width: 100%;
+    }
+    .practice-sidebar {
+        position: static;
+        margin-top: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .question-card {
+        padding: 25px 20px;
+    }
+    .image-box {
+        min-width: 100px;
+        min-height: 100px;
+        padding: 15px;
+    }
+    .sidebar-card {
+        padding: 20px 15px;
+    }
+    .practice-alert {
+        min-width: 280px;
+        left: 10px;
+        right: 10px;
+        transform: none;
+    }
+}
