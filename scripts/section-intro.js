@@ -1,218 +1,386 @@
-// Initialize AOS
-AOS.init({
-    duration: 1000,
-    once: true,
-    offset: 100
-});
-
-// Navbar scroll effect
-window.addEventListener('scroll', function() {
-    if (window.scrollY > 50) {
-        document.querySelector('.navbar').classList.add('scrolled');
-    } else {
-        document.querySelector('.navbar').classList.remove('scrolled');
-    }
-});
-
-// Lottie Animations
+// Section Intro Page Specific JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    // Main section Lottie
-    const sectionLottie = document.getElementById('section-lottie');
-    sectionLottie.innerHTML = `
-        <lottie-player 
-            src="https://assets1.lottiefiles.com/packages/lf20_kmfdbx5q.json" 
-            background="transparent" 
-            speed="1" 
-            style="width: 500px; height: 400px;" 
-            loop 
-            autoplay>
-        </lottie-player>
-    `;
-
-    // Example Lotties
-    const exampleLotties = [
-        'https://assets1.lottiefiles.com/packages/lf20_7sk0mcix.json', // Car
-        'https://assets1.lottiefiles.com/packages/lf20_7sk0mcix.json', // Wheel
-        'https://assets1.lottiefiles.com/packages/lf20_kkflmtpr.json', // Airplane
-        'https://assets1.lottiefiles.com/packages/lf20_kkflmtpr.json'  // Wing
-    ];
-
-    exampleLotties.forEach((url, index) => {
-        const container = document.getElementById(`example-lottie-${index + 1}`);
-        if (container) {
-            container.innerHTML = `
-                <lottie-player 
-                    src="${url}" 
-                    background="transparent" 
-                    speed="1" 
-                    style="width: 80px; height: 80px;" 
-                    ${index === 3 ? 'autoplay' : ''}>
-                </lottie-player>
-            `;
-        }
+    // Initialize AOS for section intro page
+    AOS.init({
+        duration: 1000,
+        once: true,
+        offset: 100
     });
 
-    // Option Lotties
-    const optionLotties = [
-        'https://assets1.lottiefiles.com/packages/lf20_kkflmtpr.json', // Correct: Wing
-        'https://assets1.lottiefiles.com/packages/lf20_7sk0mcix.json', // Wrong: Car
-        'https://assets1.lottiefiles.com/packages/lf20_5tkustlj.json', // Wrong: Boat
-        'https://assets1.lottiefiles.com/packages/lf20_gnvuxbsd.json'  // Wrong: Train
-    ];
+    // Initialize section functionality
+    initExampleExercise();
+    initLearningModes();
+    initNavigation();
+    initProgressAnimation();
+    addFloatingElements();
 
-    optionLotties.forEach((url, index) => {
-        const container = document.getElementById(`option-lottie-${index + 1}`);
-        if (container) {
-            container.innerHTML = `
-                <lottie-player 
-                    src="${url}" 
-                    background="transparent" 
-                    speed="1" 
-                    style="width: 60px; height: 60px;">
-                </lottie-player>
-            `;
-        }
-    });
+    // Initialize smooth scrolling
+    initSmoothScrolling();
+});
 
-    // Progress Lottie
-    const progressLottie = document.getElementById('progress-lottie');
-    progressLottie.innerHTML = `
-        <lottie-player 
-            src="https://assets1.lottiefiles.com/packages/lf20_obhph3sh.json" 
-            background="transparent" 
-            speed="1" 
-            style="width: 200px; height: 200px;" 
-            loop 
-            autoplay>
-        </lottie-player>
-    `;
-
-    // Example explanation toggle
-    const showExplanationBtn = document.getElementById('show-explanation');
-    const explanationContent = document.getElementById('explanation-content');
-
-    showExplanationBtn.addEventListener('click', function() {
-        if (explanationContent.style.display === 'none') {
-            explanationContent.style.display = 'block';
-            showExplanationBtn.innerHTML = '<i class="fas fa-eye-slash me-2"></i>Hide Explanation';
-        } else {
-            explanationContent.style.display = 'none';
-            showExplanationBtn.innerHTML = '<i class="fas fa-lightbulb me-2"></i>Show Explanation';
-        }
-    });
-
-    // Option selection
+// Example Exercise Functionality
+function initExampleExercise() {
     const optionItems = document.querySelectorAll('.option-item');
+    const explanationCard = document.querySelector('.explanation-card');
+
     optionItems.forEach(item => {
         item.addEventListener('click', function() {
-            // Remove selected class from all options
-            optionItems.forEach(opt => opt.classList.remove('selected'));
-            
-            // Add selected class to clicked option
-            this.classList.add('selected');
-            
-            // Show explanation if correct
-            if (this.dataset.correct === 'true') {
-                explanationContent.style.display = 'block';
-                showExplanationBtn.innerHTML = '<i class="fas fa-eye-slash me-2"></i>Hide Explanation';
+            const isCorrect = this.getAttribute('data-correct') === 'true';
+
+            // Remove previous selections
+            optionItems.forEach(opt => {
+                opt.style.borderColor = '#ddd';
+                opt.style.background = 'white';
+            });
+
+            // Show result
+            if (isCorrect) {
+                this.style.borderColor = '#28a745';
+                this.style.background = 'rgba(40, 167, 69, 0.1)';
+                showNotification('Correct! Great job! 🎉', 'success');
+            } else {
+                this.style.borderColor = '#dc3545';
+                this.style.background = 'rgba(220, 53, 69, 0.1)';
+                showNotification('Not quite right. Try again! 💡', 'error');
+
+                // Highlight correct answer
+                const correctOption = document.querySelector('.option-item[data-correct="true"]');
+                correctOption.style.borderColor = '#28a745';
+                correctOption.style.background = 'rgba(40, 167, 69, 0.1)';
+            }
+
+            // Show explanation
+            if (explanationCard) {
+                explanationCard.style.display = 'block';
+                explanationCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // Track exercise attempt
+            trackExerciseAttempt('pattern_recognition', isCorrect);
+        });
+    });
+}
+
+// Learning Modes Functionality
+function initLearningModes() {
+    const practiceBtn = document.querySelector('.start-practice-btn');
+    const testBtn = document.querySelector('.start-test-btn');
+
+    if (practiceBtn) {
+        practiceBtn.addEventListener('click', function() {
+            startPracticeMode();
+        });
+    }
+
+    if (testBtn) {
+        testBtn.addEventListener('click', function() {
+            startTestMode();
+        });
+    }
+}
+
+function startPracticeMode() {
+    showNotification('Starting Practice Mode... Get ready to learn! 📚', 'info');
+
+    // Simulate loading
+    setTimeout(() => {
+        // In a real application, this would redirect to practice mode
+        showNotification('Practice mode loaded! Begin with easy exercises.', 'success');
+        trackModeSelection('practice');
+    }, 1500);
+}
+
+function startTestMode() {
+    const confirmed = confirm('Ready for a challenge? Test mode has a 20-minute timer. Start now?');
+
+    if (confirmed) {
+        showNotification('Starting Test Mode... Good luck! ⏱️', 'info');
+
+        // Simulate loading
+        setTimeout(() => {
+            // In a real application, this would redirect to test mode
+            showNotification('Test mode begins now! Complete 20 questions in 20 minutes.', 'success');
+            trackModeSelection('test');
+        }, 1500);
+    }
+}
+
+// Navigation Functionality
+function initNavigation() {
+    // Add active states to navigation links
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section[id]');
+
+    // Update active link on scroll
+    window.addEventListener('scroll', function() {
+        let current = '';
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+
+            if (scrollY >= (sectionTop - 200)) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+                link.style.background = 'var(--light-blue)';
+                link.style.borderColor = 'var(--primary-blue)';
             }
         });
     });
+}
 
-    // Smooth scrolling for navigation links
-    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
+// Progress Animation
+function initProgressAnimation() {
+    const progressFills = document.querySelectorAll('.progress-fill');
 
-    // Animate progress bars on scroll
-    const progressItems = document.querySelectorAll('.progress-item');
+    // Animate progress bars when they come into view
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const progressFill = entry.target.querySelector('.progress-fill');
-                const width = progressFill.style.width;
-                progressFill.style.width = '0';
-                
+                const fill = entry.target;
+                const width = fill.style.width;
+                fill.style.width = '0%';
+
                 setTimeout(() => {
-                    progressFill.style.width = width;
-                }, 300);
+                    fill.style.transition = 'width 2s ease-in-out';
+                    fill.style.width = width;
+                }, 500);
+
+                observer.unobserve(fill);
             }
         });
     }, { threshold: 0.5 });
 
-    progressItems.forEach(item => observer.observe(item));
-});
+    progressFills.forEach(fill => {
+        observer.observe(fill);
+    });
+}
 
-// Section data (could be dynamic from PHP)
-const sectionData = {
-    'picture-analogy': {
-        title: 'Master Picture Analogies',
-        description: 'Develop critical thinking skills by identifying relationships between images and applying logical reasoning to solve visual puzzles.',
-        category: 'Picture Analogy',
-        questions: 20,
-        time: '20 min',
-        difficulty: 'Easy to Hard',
-        about: 'Picture Analogies help develop visual reasoning and pattern recognition skills. You\'ll be presented with two images that have a specific relationship, and your task is to identify another image that shares the same relationship with a third image.',
-        lottieUrl: 'https://assets1.lottiefiles.com/packages/lf20_kmfdbx5q.json'
-    }
-    // Add more sections as needed
-};
+// Smooth Scrolling
+function initSmoothScrolling() {
+    const navLinks = document.querySelectorAll('a[href^="#"]');
 
-// Function to update section content based on URL parameter
-function updateSectionContent() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const section = urlParams.get('section') || 'picture-analogy';
-    
-    if (sectionData[section]) {
-        const data = sectionData[section];
-        
-        document.getElementById('section-title').textContent = data.title;
-        document.getElementById('section-description').textContent = data.description;
-        document.getElementById('section-category').textContent = data.category;
-        document.getElementById('questions-count').textContent = data.questions;
-        document.getElementById('time-limit').textContent = data.time;
-        document.getElementById('difficulty-level').textContent = data.difficulty;
-        document.getElementById('section-about').textContent = data.about;
-        
-        // Update practice and test links
-        document.querySelectorAll('.action-buttons a, .mode-card a').forEach(link => {
-            const href = link.getAttribute('href').split('?')[0];
-            link.setAttribute('href', `${href}?section=${section}`);
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                const offsetTop = targetElement.offsetTop - 100;
+
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
         });
-    }
+    });
 }
-// Update Lottie initialization for better responsive behavior
-function initializeLottieAnimations() {
-    // Main section Lottie with responsive sizing
-    const sectionLottie = document.getElementById('section-lottie');
-    if (sectionLottie) {
-        sectionLottie.innerHTML = `
-            <lottie-player 
-                src="https://assets1.lottiefiles.com/packages/lf20_kmfdbx5q.json" 
-                background="transparent" 
-                speed="1" 
-                style="width: 100%; height: auto; max-width: 500px;" 
-                loop 
-                autoplay>
-            </lottie-player>
-        `;
+
+// // Add Floating Elements - Enhanced for better distribution
+function addFloatingElements() {
+    const floatingContainer = document.querySelector('.floating-elements');
+    if (!floatingContainer) return;
+
+    const colors = [
+        'rgba(254, 197, 58, 0.3)',
+        'rgba(255, 255, 255, 0.2)',
+        'rgba(156, 81, 224, 0.2)',
+        'rgba(68, 173, 229, 0.2)'
+    ];
+
+    // Clear existing elements
+    floatingContainer.innerHTML = '';
+
+    for (let i = 0; i < 15; i++) {
+        const element = document.createElement('div');
+        element.classList.add('floating-element');
+
+        const size = Math.random() * 60 + 20;
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const delay = Math.random() * 10;
+        const duration = Math.random() * 10 + 15;
+
+        element.style.width = `${size}px`;
+        element.style.height = `${size}px`;
+        element.style.left = `${left}%`;
+        element.style.top = `${top}%`;
+        element.style.background = color;
+        element.style.animationDelay = `${delay}s`;
+        element.style.animationDuration = `${duration}s`;
+
+        floatingContainer.appendChild(element);
     }
 }
 
-// Call this function on load and resize
-window.addEventListener('load', initializeLottieAnimations);
-window.addEventListener('resize', initializeLottieAnimations);
-// Initialize section content
-updateSectionContent();
+// Analytics Tracking
+function trackExerciseAttempt(exerciseType, isCorrect) {
+    // In a real application, you would send this to your analytics service
+    console.log('Exercise Attempt:', {
+        type: exerciseType,
+        correct: isCorrect,
+        timestamp: new Date().toISOString(),
+        page: 'section-intro.php'
+    });
+}
+
+function trackModeSelection(mode) {
+    // In a real application, you would send this to your analytics service
+    console.log('Mode Selection:', {
+        mode: mode,
+        timestamp: new Date().toISOString(),
+        section: 'critical_thinking'
+    });
+}
+
+// Notification System
+function showNotification(message, type) {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.section-notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `section-notification alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} position-fixed`;
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        max-width: 500px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        border-radius: 15px;
+        border: none;
+        padding: 20px;
+        font-weight: 600;
+    `;
+
+    // Add icon based on type
+    let icon = '';
+    if (type === 'success') {
+        icon = '<i class="fas fa-check-circle me-2"></i>';
+        notification.style.background = 'linear-gradient(135deg, #d4edda, #c3e6cb)';
+        notification.style.color = '#155724';
+    } else if (type === 'error') {
+        icon = '<i class="fas fa-exclamation-circle me-2"></i>';
+        notification.style.background = 'linear-gradient(135deg, #f8d7da, #f5c6cb)';
+        notification.style.color = '#721c24';
+    } else {
+        icon = '<i class="fas fa-info-circle me-2"></i>';
+        notification.style.background = 'linear-gradient(135deg, #cce7ff, #b3d9ff)';
+        notification.style.color = '#004085';
+    }
+
+    notification.innerHTML = `${icon}${message}`;
+
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100px)';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
+
+    // Add close button functionality
+    notification.addEventListener('click', () => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100px)';
+        setTimeout(() => notification.remove(), 300);
+    });
+}
+
+// Section Bookmarking
+function initBookmarking() {
+    // Add bookmark functionality for sections
+    const bookmarkBtn = document.createElement('button');
+    bookmarkBtn.className = 'btn btn-outline-primary position-fixed';
+    bookmarkBtn.style.cssText = `
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        border-radius: 50px;
+        padding: 12px 20px;
+        font-weight: 600;
+    `;
+    bookmarkBtn.innerHTML = '<i class="fas fa-bookmark me-2"></i>Bookmark Section';
+    bookmarkBtn.onclick = toggleBookmark;
+
+    document.body.appendChild(bookmarkBtn);
+
+    // Check if section is already bookmarked
+    updateBookmarkButton();
+}
+
+function toggleBookmark() {
+    const sectionId = 'critical_thinking';
+    const bookmarks = JSON.parse(localStorage.getItem('quest_bookmarks') || '[]');
+    const isBookmarked = bookmarks.includes(sectionId);
+
+    if (isBookmarked) {
+        // Remove bookmark
+        const index = bookmarks.indexOf(sectionId);
+        bookmarks.splice(index, 1);
+        showNotification('Section removed from bookmarks', 'info');
+    } else {
+        // Add bookmark
+        bookmarks.push(sectionId);
+        showNotification('Section bookmarked! 📚', 'success');
+    }
+
+    localStorage.setItem('quest_bookmarks', JSON.stringify(bookmarks));
+    updateBookmarkButton();
+}
+
+function updateBookmarkButton() {
+    const sectionId = 'critical_thinking';
+    const bookmarks = JSON.parse(localStorage.getItem('quest_bookmarks') || '[]');
+    const isBookmarked = bookmarks.includes(sectionId);
+    const bookmarkBtn = document.querySelector('.btn[onclick="toggleBookmark()"]');
+
+    if (bookmarkBtn) {
+        if (isBookmarked) {
+            bookmarkBtn.innerHTML = '<i class="fas fa-bookmark text-warning me-2"></i>Bookmarked';
+            bookmarkBtn.classList.add('btn-warning');
+            bookmarkBtn.classList.remove('btn-outline-primary');
+        } else {
+            bookmarkBtn.innerHTML = '<i class="fas fa-bookmark me-2"></i>Bookmark Section';
+            bookmarkBtn.classList.remove('btn-warning');
+            bookmarkBtn.classList.add('btn-outline-primary');
+        }
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Add bookmarking functionality
+    initBookmarking();
+
+    // Add print section button
+    const printBtn = document.createElement('button');
+    printBtn.className = 'btn btn-outline-secondary position-fixed';
+    printBtn.style.cssText = `
+        bottom: 80px;
+        right: 20px;
+        z-index: 1000;
+        border-radius: 50px;
+        padding: 12px 20px;
+        font-weight: 600;
+    `;
+    printBtn.innerHTML = '<i class="fas fa-print me-2"></i>Print Section';
+    printBtn.onclick = () => window.print();
+
+    document.body.appendChild(printBtn);
+});
