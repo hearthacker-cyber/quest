@@ -26,8 +26,8 @@
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h5>Resources</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#">Blog</a></li>
-                        <li class="mb-2"><a href="#">FAQ</a></li>
+                        <li class="mb-2"><a href="blog.php">Blog</a></li>
+                        <li class="mb-2"><a href="faq.php">FAQ</a></li>
                         <li class="mb-2"><a href="#">Support</a></li>
                         <li class="mb-2"><a href="contact.php">Contact Us</a></li>
                         <li class="mb-2"><a href="#">Privacy Policy</a></li>

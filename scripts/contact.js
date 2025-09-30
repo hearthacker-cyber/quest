@@ -1,142 +1,245 @@
-// Contact Form Functionality
+// Contact Page Specific JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Contact page loaded'); // Debug line
+    // Initialize AOS for contact page
+    AOS.init({
+        duration: 1000,
+        once: true,
+        offset: 100
+    });
 
+    // Contact form handling
     const contactForm = document.getElementById('contactForm');
-
     if (contactForm) {
-        console.log('Contact form found'); // Debug line
+        contactForm.addEventListener('submit', handleFormSubmit);
+    }
 
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
-        const submitText = contactForm.querySelector('.submit-text');
-        const spinner = contactForm.querySelector('.spinner-border');
+    // Add real-time validation
+    const formInputs = contactForm.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('blur', validateField);
+        input.addEventListener('input', clearFieldError);
+    });
 
-        // Form validation and submission
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            console.log('Form submitted'); // Debug line
+    // Add floating elements
+    addFloatingElements();
 
-            if (validateForm()) {
-                // Show loading state
-                submitText.textContent = 'Sending...';
-                spinner.classList.remove('d-none');
-                submitBtn.disabled = true;
-
-                // Simulate form submission
-                setTimeout(() => {
-                    // Show success message
-                    showSuccessMessage();
-
-                    // Reset form
-                    contactForm.reset();
-
-                    // Reset button state
-                    submitText.textContent = 'Send Message';
-                    spinner.classList.add('d-none');
-                    submitBtn.disabled = false;
-                }, 2000);
-            }
+    // Smooth scroll for FAQ items
+    const faqButtons = document.querySelectorAll('.accordion-button');
+    faqButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            this.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
+    });
+});
 
-        // Real-time validation
-        const inputs = contactForm.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                validateField(this);
-            });
+// Form submission handler
+function handleFormSubmit(e) {
+    e.preventDefault();
 
-            input.addEventListener('input', function() {
-                if (this.classList.contains('is-invalid')) {
-                    validateField(this);
-                }
-            });
-        });
+    const form = e.target;
+    const submitButton = form.querySelector('button[type="submit"]');
+    const submitText = submitButton.querySelector('.submit-text');
+    const spinner = submitButton.querySelector('.spinner-border');
 
-        function validateForm() {
-            let isValid = true;
-            inputs.forEach(input => {
-                if (input.hasAttribute('required')) {
-                    if (!validateField(input)) {
-                        isValid = false;
-                    }
-                }
-            });
-            return isValid;
+    // Validate form
+    if (!validateForm(form)) {
+        showNotification('Please fill in all required fields correctly.', 'error');
+        return;
+    }
+
+    // Show loading state
+    submitText.classList.add('d-none');
+    spinner.classList.remove('d-none');
+    submitButton.disabled = true;
+
+    // Simulate API call
+    setTimeout(() => {
+        // Reset loading state
+        submitText.classList.remove('d-none');
+        spinner.classList.add('d-none');
+        submitButton.disabled = false;
+
+        // Show success message
+        showNotification('Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.', 'success');
+
+        // Reset form
+        form.reset();
+        form.classList.remove('was-validated');
+    }, 2000);
+}
+
+// Form validation
+function validateForm(form) {
+    let isValid = true;
+
+    // Clear previous validation
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.classList.remove('is-invalid');
+    });
+
+    // Validate required fields
+    const requiredFields = form.querySelectorAll('[required]');
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('is-invalid');
+            isValid = false;
         }
+    });
 
-        function validateField(field) {
-            const value = field.value.trim();
-            let isValid = true;
-
-            // Remove previous validation states
-            field.classList.remove('is-valid', 'is-invalid');
-
-            if (field.hasAttribute('required') && !value) {
-                field.classList.add('is-invalid');
-                isValid = false;
-            } else if (field.type === 'email' && value) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(value)) {
-                    field.classList.add('is-invalid');
-                    isValid = false;
-                }
-            } else if (field.type === 'tel' && value) {
-                const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-                if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) {
-                    field.classList.add('is-invalid');
-                    isValid = false;
-                }
-            }
-
-            if (isValid && (field.hasAttribute('required') || value)) {
-                field.classList.add('is-valid');
-            }
-
-            return isValid;
-        }
-
-        function showSuccessMessage() {
-            // Create success message element
-            const successHTML = `
-                <div class="success-message">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>Message Sent Successfully!</h3>
-                    <p>Thank you for contacting us. We'll get back to you within 24 hours.</p>
-                    <button class="btn btn-primary mt-3" onclick="location.reload()">Send Another Message</button>
-                </div>
-            `;
-
-            // Replace form with success message
-            contactForm.style.display = 'none';
-            contactForm.insertAdjacentHTML('afterend', successHTML);
+    // Validate email format
+    const emailField = form.querySelector('input[type="email"]');
+    if (emailField && emailField.value.trim()) {
+        if (!validateEmail(emailField.value)) {
+            emailField.classList.add('is-invalid');
+            isValid = false;
         }
     }
 
-    // Add floating elements dynamically for contact page
-    const floatingContainer = document.querySelector('.contact-hero-section .floating-elements');
-    if (floatingContainer) {
-        console.log('Adding floating elements'); // Debug line
-        const colors = ['rgba(254, 197, 58, 0.3)', 'rgba(255, 255, 255, 0.2)', 'rgba(156, 81, 224, 0.2)'];
+    if (!isValid) {
+        form.classList.add('was-validated');
+    }
 
-        for (let i = 0; i < 12; i++) {
-            const element = document.createElement('div');
-            element.classList.add('floating-element');
+    return isValid;
+}
 
-            const size = Math.random() * 60 + 20;
-            const left = Math.random() * 100;
-            const top = Math.random() * 100;
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            const delay = Math.random() * 10;
+// Field validation
+function validateField(e) {
+    const field = e.target;
 
-            element.style.width = `${size}px`;
-            element.style.height = `${size}px`;
-            element.style.left = `${left}%`;
-            element.style.top = `${top}%`;
-            element.style.background = color;
-            element.style.animationDelay = `${delay}s`;
+    if (field.hasAttribute('required') && !field.value.trim()) {
+        field.classList.add('is-invalid');
+        return;
+    }
 
-            floatingContainer.appendChild(element);
+    if (field.type === 'email' && field.value.trim()) {
+        if (!validateEmail(field.value)) {
+            field.classList.add('is-invalid');
+            return;
         }
     }
 
+    field.classList.remove('is-invalid');
+}
+
+// Clear field error
+function clearFieldError(e) {
+    const field = e.target;
+    field.classList.remove('is-invalid');
+}
+
+// Email validation
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// Notification system
+function showNotification(message, type) {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.custom-notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `custom-notification alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} position-fixed`;
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        max-width: 500px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        border-radius: 15px;
+        border: none;
+        padding: 20px;
+        font-weight: 600;
+    `;
+
+    // Add icon based on type
+    let icon = '';
+    if (type === 'success') {
+        icon = '<i class="fas fa-check-circle me-2"></i>';
+        notification.style.background = 'linear-gradient(135deg, #d4edda, #c3e6cb)';
+        notification.style.color = '#155724';
+    } else if (type === 'error') {
+        icon = '<i class="fas fa-exclamation-circle me-2"></i>';
+        notification.style.background = 'linear-gradient(135deg, #f8d7da, #f5c6cb)';
+        notification.style.color = '#721c24';
+    } else {
+        icon = '<i class="fas fa-info-circle me-2"></i>';
+        notification.style.background = 'linear-gradient(135deg, #cce7ff, #b3d9ff)';
+        notification.style.color = '#004085';
+    }
+
+    notification.innerHTML = `${icon}${message}`;
+
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100px)';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
+
+    // Add close button functionality
+    notification.addEventListener('click', () => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100px)';
+        setTimeout(() => notification.remove(), 300);
+    });
+}
+
+// Add floating elements dynamically
+function addFloatingElements() {
+    const floatingContainer = document.querySelector('.floating-elements');
+    if (!floatingContainer) return;
+
+    const colors = ['rgba(254, 197, 58, 0.3)', 'rgba(255, 255, 255, 0.2)', 'rgba(156, 81, 224, 0.2)'];
+
+    for (let i = 0; i < 8; i++) {
+        const element = document.createElement('div');
+        element.classList.add('floating-element');
+
+        const size = Math.random() * 50 + 20;
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const delay = Math.random() * 10;
+
+        element.style.width = `${size}px`;
+        element.style.height = `${size}px`;
+        element.style.left = `${left}%`;
+        element.style.top = `${top}%`;
+        element.style.background = color;
+        element.style.animationDelay = `${delay}s`;
+
+        floatingContainer.appendChild(element);
+    }
+}
+
+// Phone number formatting
+function formatPhoneNumber(phone) {
+    const cleaned = phone.replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+    }
+    return phone;
+}
+
+// Initialize phone number formatting
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            const formatted = formatPhoneNumber(e.target.value);
+            if (formatted !== e.target.value) {
+                e.target.value = formatted;
+            }
+        });
+    }
 });
