@@ -9,19 +9,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#home">Home</a>
+                        <a class="nav-link active" href="index.php#home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
+                        <a class="nav-link" href="index.php#features">Features</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#pricing">Pricing</a>
+                        <a class="nav-link" href="index.php#pricing">Pricing</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#grades">Grades</a>
+                        <a class="nav-link" href="index.php#grades">Grades</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#testimonials">Testimonials</a>
+                        <a class="nav-link" href="index.php#testimonials">Testimonials</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">About Us</a>
