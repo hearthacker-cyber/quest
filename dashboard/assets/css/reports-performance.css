@@ -1,0 +1,176 @@
+/* Custom styles for User Performance Reports */
+
+
+/* Filter Section Styling */
+
+.card .card-body .form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+
+/* DataTables Customization */
+
+#userPerformanceTable_wrapper .dataTables_length,
+#userPerformanceTable_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+#userPerformanceTable_wrapper .dataTables_length select {
+    width: auto;
+    display: inline-block;
+}
+
+#userPerformanceTable_wrapper .dataTables_filter input {
+    margin-left: 0.5em;
+    display: inline-block;
+    width: auto;
+}
+
+
+/* Action Buttons */
+
+.btn-action {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.2rem;
+}
+
+
+/* Status Badges */
+
+.badge-completed {
+    background-color: #28a745;
+}
+
+.badge-in-progress {
+    background-color: #17a2b8;
+}
+
+.badge-not-started {
+    background-color: #6c757d;
+}
+
+
+/* Chart Container */
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+
+/* Custom Stat Cards */
+
+.custom-stat-card {
+    border: none;
+    box-shadow: 0 0.75rem 1.5rem rgba(18, 38, 63, 0.03);
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
+
+.custom-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(18, 38, 63, 0.1);
+}
+
+.mini-stats-content {
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.mini-stats-desc {
+    border-radius: 0 0 0.375rem 0.375rem;
+    margin-top: -20px;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-icon {
+    font-size: 2rem;
+    opacity: 0.9;
+}
+
+
+/* Date Range Picker Customization */
+
+.daterangepicker {
+    font-family: inherit;
+}
+
+.daterangepicker td.active {
+    background-color: #4361ee;
+}
+
+
+/* Responsive Adjustments */
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px;
+    }
+    .custom-stat-card .mini-stats-content .float-end {
+        float: none !important;
+        text-align: left !important;
+        margin-top: 10px;
+    }
+}
+
+
+/* DataTables Export Buttons */
+
+.dt-buttons .btn {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+
+/* Filter Section */
+
+#applyFilters,
+#resetFilters {
+    min-width: 120px;
+}
+
+
+/* Table Row Hover Effects */
+
+#userPerformanceTable tbody tr {
+    transition: all 0.2s ease;
+}
+
+#userPerformanceTable tbody tr:hover {
+    background-color: rgba(67, 97, 238, 0.05);
+    transform: translateX(2px);
+}
+
+
+/* Grade Level Badges */
+
+.grade-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+
+/* Performance Score Colors */
+
+.score-excellent {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.score-good {
+    color: #17a2b8;
+    font-weight: 600;
+}
+
+.score-average {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.score-poor {
+    color: #dc3545;
+    font-weight: 600;
+}

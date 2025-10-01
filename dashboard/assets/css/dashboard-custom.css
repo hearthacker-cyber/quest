@@ -1,0 +1,136 @@
+/* Custom Dashboard Styles */
+
+:root {
+    --primary-gradient: linear-gradient(135deg, #4361ee, #3a0ca3);
+    --secondary-gradient: linear-gradient(135deg, #4cc9f0, #4895ef);
+    --success-gradient: linear-gradient(135deg, #43aa8b, #4d908e);
+    --warning-gradient: linear-gradient(135deg, #f8961e, #f3722c);
+    --danger-gradient: linear-gradient(135deg, #f72585, #b5179e);
+    --info-gradient: linear-gradient(135deg, #7209b7, #560bad);
+}
+
+.custom-stat-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.custom-stat-card .mini-stats-content {
+    border-radius: 10px 10px 0 0;
+}
+
+.custom-stat-card .stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.custom-stat-card .mini-stats-desc {
+    border-radius: 0 0 10px 10px;
+    border: 1px solid #f3f3f3;
+    border-top: none;
+}
+
+.chart-container {
+    position: relative;
+    height: 100%;
+    min-height: 200px;
+}
+
+
+/* Custom badge colors */
+
+.badge.bg-light.text-success {
+    background-color: rgba(40, 167, 69, 0.1) !important;
+    color: #28a745 !important;
+    border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.badge.bg-light.text-primary {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    color: #0d6efd !important;
+    border: 1px solid rgba(13, 110, 253, 0.2);
+}
+
+
+/* Table improvements */
+
+.table-hover tbody tr:hover {
+    background-color: rgba(67, 97, 238, 0.05);
+}
+
+.avatar-xs {
+    width: 32px;
+    height: 32px;
+}
+
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+    .custom-stat-card .stat-icon {
+        font-size: 2rem;
+    }
+    .page-title-box .float-end {
+        margin-top: 1rem;
+    }
+}
+
+
+/* Card header improvements */
+
+.card .card-body h4.header-title {
+    color: #495057;
+    font-weight: 600;
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+
+/* Animation for stats */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.custom-stat-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.custom-stat-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.custom-stat-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.custom-stat-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.custom-stat-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.custom-stat-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.custom-stat-card:nth-child(6) {
+    animation-delay: 0.6s;
+}

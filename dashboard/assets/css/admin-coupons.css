@@ -1,0 +1,444 @@
+/* Custom Styles for Coupons Page */
+
+
+/* Card Header Styling */
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+
+/* Statistics Cards */
+
+.mini-stats {
+    transition: transform 0.2s ease-in-out;
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.mini-stats:hover {
+    transform: translateY(-2px);
+}
+
+.mini-stat-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-stat-icon span {
+    font-size: 1.5rem;
+}
+
+
+/* Coupon Code Styling */
+
+.badge[class*="bg-"] {
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+
+/* Progress Bar Styling */
+
+.progress {
+    background-color: #e9ecef;
+    border-radius: 2px;
+}
+
+.progress-bar {
+    border-radius: 2px;
+}
+
+
+/* Table Styling */
+
+#couponsTable_wrapper {
+    padding: 0;
+}
+
+#couponsTable {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#couponsTable thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    position: sticky;
+    top: 0;
+}
+
+#couponsTable tbody tr {
+    transition: background-color 0.15s ease-in-out;
+}
+
+#couponsTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+
+/* Button Group Styling */
+
+.btn-group-sm>.btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+
+/* Status-specific row styling */
+
+tr.status-active {
+    border-left: 3px solid #28a745;
+}
+
+tr.status-inactive {
+    border-left: 3px solid #6c757d;
+}
+
+tr.status-expired {
+    border-left: 3px solid #dc3545;
+}
+
+
+/* Badge Styling */
+
+.badge {
+    font-size: 0.75em;
+    font-weight: 500;
+}
+
+.badge.bg-warning {
+    color: #000 !important;
+}
+
+
+/* Modal Styling */
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+}
+
+
+/* Quick Actions */
+
+.quick-actions .btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.quick-actions .btn:hover {
+    transform: translateY(-1px);
+}
+
+
+/* Form Control Focus */
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+
+/* Checkbox Styling */
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.form-check-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+
+/* Plans Checklist */
+
+.plan-checkbox[value="all"]:checked~.plan-checkbox:not([value="all"]) {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+
+/* Loading States */
+
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-right-color: transparent;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+
+/* Success/Error Messages */
+
+.alert-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1060;
+    min-width: 300px;
+}
+
+
+/* Custom Scrollbar */
+
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.plans-checklist::-webkit-scrollbar {
+    width: 6px;
+}
+
+.plans-checklist::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.plans-checklist::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+
+/* Animation for new rows */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+
+/* Export Buttons */
+
+.export-buttons .btn {
+    margin-left: 0.5rem;
+}
+
+.dt-buttons .btn {
+    margin-right: 5px;
+    font-size: 0.875rem;
+}
+
+
+/* Responsive Adjustments */
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    .btn-group-sm>.btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    .mini-stat-icon {
+        width: 40px;
+        height: 40px;
+    }
+    .mini-stat-icon span {
+        font-size: 1.25rem !important;
+    }
+    /* Stack button groups on mobile */
+    .btn-group-sm {
+        flex-direction: column;
+    }
+    .btn-group-sm>.btn {
+        margin-bottom: 0.25rem;
+        border-radius: 0.375rem !important;
+    }
+    /* Adjust progress bars on mobile */
+    .progress {
+        height: 3px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-header {
+        padding: 1rem;
+    }
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    /* Adjust modal for mobile */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    .modal-body {
+        padding: 1rem;
+    }
+    /* Stack form columns on mobile */
+    .modal-body .row>[class*="col-"] {
+        margin-bottom: 1rem;
+    }
+    /* Quick actions stack on mobile */
+    .quick-actions .row>[class*="col-"] {
+        margin-bottom: 0.5rem;
+    }
+}
+
+
+/* Print Styles */
+
+@media print {
+    .card-header,
+    .btn,
+    .dataTables_length,
+    .dataTables_filter,
+    .dataTables_info,
+    .dataTables_paginate,
+    .dt-buttons,
+    .quick-actions {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    table {
+        width: 100% !important;
+    }
+    .badge {
+        border: 1px solid #000 !important;
+        color: #000 !important;
+        background: white !important;
+    }
+}
+
+
+/* Discount Value Colors */
+
+.text-success {
+    color: #28a745 !important;
+    font-weight: 600;
+}
+
+
+/* Date Status Colors */
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-info {
+    color: #17a2b8 !important;
+}
+
+
+/* Hover Effects */
+
+.btn:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease-in-out;
+}
+
+
+/* Custom background for different statuses */
+
+.bg-success-light {
+    background-color: rgba(40, 167, 69, 0.1) !important;
+}
+
+.bg-danger-light {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+.bg-warning-light {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.bg-info-light {
+    background-color: rgba(23, 162, 184, 0.1) !important;
+}
+
+
+/* Code Generation Button */
+
+#generateCode {
+    transition: all 0.2s ease-in-out;
+}
+
+#generateCode:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+
+/* Usage Progress Colors */
+
+.progress-bar.bg-success {
+    background-color: #28a745 !important;
+}
+
+.progress-bar.bg-info {
+    background-color: #17a2b8 !important;
+}
+
+.progress-bar.bg-warning {
+    background-color: #ffc107 !important;
+}

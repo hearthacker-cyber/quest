@@ -1,0 +1,297 @@
+/* Quick Actions Dashboard Styles */
+
+.quick-stat-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.quick-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.quick-stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 1.5rem;
+}
+
+.quick-stat-number {
+    font-weight: 700;
+    color: #495057;
+}
+
+
+/* Quick Action Cards */
+
+.quick-action-card {
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.quick-action-card:hover {
+    text-decoration: none;
+    transform: translateY(-5px);
+}
+
+.action-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+.action-icon {
+    font-size: 2.5rem;
+    opacity: 0.9;
+}
+
+.action-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.action-desc {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+
+/* Color variants for action cards */
+
+.action-card.bg-primary {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3) !important;
+}
+
+.action-card.bg-success {
+    background: linear-gradient(135deg, #4cc9f0, #4895ef) !important;
+}
+
+.action-card.bg-info {
+    background: linear-gradient(135deg, #7209b7, #560bad) !important;
+}
+
+.action-card.bg-warning {
+    background: linear-gradient(135deg, #f8961e, #f3722c) !important;
+}
+
+.action-card.bg-danger {
+    background: linear-gradient(135deg, #f72585, #b5179e) !important;
+}
+
+.action-card.bg-secondary {
+    background: linear-gradient(135deg, #6c757d, #495057) !important;
+}
+
+
+/* Quick Actions Grid */
+
+.quick-actions-grid {
+    margin: 0 -10px;
+}
+
+.quick-actions-grid .col-xl-2,
+.quick-actions-grid .col-md-4,
+.quick-actions-grid .col-sm-6 {
+    padding: 0 10px;
+}
+
+
+/* Table Improvements */
+
+.table-centered td {
+    vertical-align: middle;
+}
+
+.test-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+
+/* Animation delays for action cards */
+
+.quick-action-card:nth-child(1) .action-card {
+    animation-delay: 0.1s;
+}
+
+.quick-action-card:nth-child(2) .action-card {
+    animation-delay: 0.2s;
+}
+
+.quick-action-card:nth-child(3) .action-card {
+    animation-delay: 0.3s;
+}
+
+.quick-action-card:nth-child(4) .action-card {
+    animation-delay: 0.4s;
+}
+
+.quick-action-card:nth-child(5) .action-card {
+    animation-delay: 0.5s;
+}
+
+.quick-action-card:nth-child(6) .action-card {
+    animation-delay: 0.6s;
+}
+
+
+/* Stats animation delays */
+
+.quick-stat-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.quick-stat-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.quick-stat-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.quick-stat-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+
+/* Hover effects for tables */
+
+.table-hover tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(67, 97, 238, 0.05);
+    transform: translateX(5px);
+}
+
+
+/* Badge improvements */
+
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .quick-actions-grid .col-sm-6 {
+        margin-bottom: 1rem;
+    }
+    .action-card {
+        min-height: 140px;
+    }
+    .action-icon {
+        font-size: 2rem;
+    }
+    .action-title {
+        font-size: 1rem;
+    }
+    .quick-stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .quick-actions-grid .col-sm-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    .action-card {
+        min-height: 120px;
+        padding: 1.5rem !important;
+    }
+}
+
+
+/* Loading animation for cards */
+
+@keyframes cardLoad {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.action-card,
+.quick-stat-card {
+    animation: cardLoad 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+
+/* Pulse animation for quick stats */
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(67, 97, 238, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(67, 97, 238, 0);
+    }
+}
+
+.quick-stat-card:hover .quick-stat-icon {
+    animation: pulse 1.5s infinite;
+}
+
+
+/* Gradient backgrounds for stat icons */
+
+.quick-stat-icon.bg-primary {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3) !important;
+}
+
+.quick-stat-icon.bg-success {
+    background: linear-gradient(135deg, #4cc9f0, #4895ef) !important;
+}
+
+.quick-stat-icon.bg-warning {
+    background: linear-gradient(135deg, #f8961e, #f3722c) !important;
+}
+
+.quick-stat-icon.bg-info {
+    background: linear-gradient(135deg, #7209b7, #560bad) !important;
+}

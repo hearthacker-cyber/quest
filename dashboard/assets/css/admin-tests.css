@@ -1,0 +1,431 @@
+/* Tests Management Page Custom Styles */
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: none;
+    margin-bottom: 24px;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #eaeaea;
+    padding: 20px 25px;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+    padding: 10px 15px;
+    border: 1px solid #e2e5e8;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 0 0.15rem rgba(67, 97, 238, 0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 25px;
+    font-weight: 500;
+}
+
+.btn-outline-secondary {
+    border-radius: 8px;
+    padding: 10px 25px;
+    font-weight: 500;
+}
+
+
+/* Mini Stats Cards */
+
+.mini-stats {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: none;
+    margin-bottom: 24px;
+    transition: transform 0.2s ease;
+}
+
+.mini-stats:hover {
+    transform: translateY(-2px);
+}
+
+.mini-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-stat-icon.avatar-sm {
+    width: 50px;
+    height: 50px;
+}
+
+.mini-stat-icon .avatar-title {
+    font-size: 20px;
+    color: white;
+}
+
+
+/* Custom Background Colors */
+
+.bg-purple {
+    background: linear-gradient(135deg, #6f42c1, #5a2d9c) !important;
+}
+
+.bg-orange {
+    background: linear-gradient(135deg, #fd7e14, #e55a00) !important;
+}
+
+
+/* DataTables Customization */
+
+#testsTable_wrapper {
+    padding: 0;
+}
+
+#testsTable {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#testsTable thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    color: #495057;
+    padding: 12px 15px;
+}
+
+#testsTable tbody td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#testsTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+
+/* Badge Styles */
+
+.badge {
+    font-size: 0.75em;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.badge.bg-success {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+.badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+    color: #000;
+}
+
+.badge.bg-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+}
+
+.badge.bg-info {
+    background: linear-gradient(135deg, #17a2b8, #138496) !important;
+}
+
+.badge.bg-primary {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3) !important;
+}
+
+.badge.bg-secondary {
+    background: linear-gradient(135deg, #6c757d, #495057) !important;
+}
+
+.badge.bg-purple {
+    background: linear-gradient(135deg, #6f42c1, #5a2d9c) !important;
+}
+
+
+/* Action Buttons */
+
+.btn-group .btn {
+    border-radius: 6px;
+    margin: 0 2px;
+    padding: 6px 10px;
+}
+
+.btn-outline-primary {
+    color: #4361ee;
+    border-color: #4361ee;
+}
+
+.btn-outline-primary:hover {
+    background-color: #4361ee;
+    border-color: #4361ee;
+}
+
+.btn-outline-warning {
+    color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-outline-warning:hover {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+}
+
+.btn-outline-info {
+    color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+
+/* Form Check */
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #dee2e6;
+}
+
+.form-check-input:checked {
+    background-color: #4361ee;
+    border-color: #4361ee;
+}
+
+
+/* Avatar Colors */
+
+.avatar-title.bg-primary {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3) !important;
+}
+
+.avatar-title.bg-success {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+.avatar-title.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+}
+
+.avatar-title.bg-info {
+    background: linear-gradient(135deg, #17a2b8, #138496) !important;
+}
+
+.avatar-title.bg-purple {
+    background: linear-gradient(135deg, #6f42c1, #5a2d9c) !important;
+}
+
+
+/* Stats Icons */
+
+.mini-stat-icon.bg-primary {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3) !important;
+}
+
+.mini-stat-icon.bg-success {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+.mini-stat-icon.bg-info {
+    background: linear-gradient(135deg, #17a2b8, #138496) !important;
+}
+
+.mini-stat-icon.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+}
+
+.mini-stat-icon.bg-purple {
+    background: linear-gradient(135deg, #6f42c1, #5a2d9c) !important;
+}
+
+.mini-stat-icon.bg-orange {
+    background: linear-gradient(135deg, #fd7e14, #e55a00) !important;
+}
+
+
+/* Date Range Picker Customization */
+
+.daterangepicker {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1);
+}
+
+.daterangepicker .calendar-table {
+    border-radius: 8px;
+}
+
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
+    background-color: #4361ee;
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 15px;
+    }
+    .card-header {
+        padding: 15px 20px;
+    }
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+    }
+    .btn-group .btn {
+        flex: 1;
+        min-width: 35px;
+        margin: 1px;
+        padding: 5px 8px;
+    }
+    #testsTable thead th:nth-child(3),
+    #testsTable tbody td:nth-child(3) {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-title-box .float-end {
+        float: none !important;
+        text-align: left;
+        margin-top: 10px;
+    }
+    .page-title-box .btn {
+        width: 100%;
+    }
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    .mini-stats .card-body {
+        padding: 15px;
+    }
+}
+
+
+/* Loading State */
+
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn-loading:after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-right-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Alert Styles */
+
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da, #f1b0b7);
+    color: #721c24;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #856404;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #d1ecf1, #b8e2e8);
+    color: #0c5460;
+}
+
+
+/* Table Status Indicators */
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.status-active {
+    background-color: #28a745;
+}
+
+.status-draft {
+    background-color: #6c757d;
+}
+
+.status-completed {
+    background-color: #dc3545;
+}
+
+.status-scheduled {
+    background-color: #4361ee;
+}

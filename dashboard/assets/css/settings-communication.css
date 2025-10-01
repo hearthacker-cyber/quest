@@ -1,0 +1,359 @@
+/* Custom Styles for Communication Settings Page */
+
+
+/* Card Header Styling */
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+
+/* Form Styling */
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-label .text-danger {
+    font-weight: 600;
+}
+
+
+/* Input Group Styling */
+
+.input-group .btn-outline-secondary {
+    border-color: #ced4da;
+    transition: all 0.15s ease-in-out;
+}
+
+.input-group .btn-outline-secondary:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+
+/* Notification List Styling */
+
+.notification-list .form-check-label {
+    cursor: pointer;
+}
+
+.notification-list .form-check-label strong {
+    color: #495057;
+    font-weight: 600;
+}
+
+.notification-list .form-check-label small {
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+
+/* Switch Styling */
+
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+
+/* Quick Actions */
+
+.quick-actions .btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.quick-actions .btn:hover {
+    transform: translateY(-1px);
+}
+
+
+/* Validation States */
+
+.was-validated .form-control:valid,
+.form-control.is-valid {
+    border-color: #198754;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6.4.4.4-.4'/%3e%3cpath d='M6 7v2'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+
+/* Password Toggle */
+
+.password-toggle {
+    cursor: pointer;
+    transition: color 0.15s ease-in-out;
+}
+
+.password-toggle:hover {
+    color: #495057 !important;
+}
+
+
+/* Alert Styling */
+
+.alert {
+    border: none;
+    border-left: 4px solid;
+}
+
+.alert-info {
+    border-left-color: #0dcaf0;
+    background-color: rgba(13, 202, 240, 0.1);
+}
+
+
+/* Modal Styling */
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+
+/* Success/Error Messages */
+
+.alert-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1060;
+    min-width: 300px;
+}
+
+
+/* Loading States */
+
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-right-color: transparent;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+
+/* Responsive Adjustments */
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    /* Stack form columns on mobile */
+    .row>[class*="col-"] {
+        margin-bottom: 1rem;
+    }
+    /* Adjust notification lists for mobile */
+    .notification-list .form-check {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .notification-list .form-check:last-child {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-header {
+        padding: 1rem;
+    }
+    /* Stack quick actions on mobile */
+    .quick-actions .row>[class*="col-"] {
+        margin-bottom: 0.5rem;
+    }
+    /* Adjust input groups for mobile */
+    .input-group {
+        flex-direction: column;
+    }
+    .input-group .form-control {
+        border-radius: 0.375rem !important;
+        margin-bottom: 0.5rem;
+    }
+    .input-group .btn {
+        border-radius: 0.375rem !important;
+        width: 100%;
+    }
+}
+
+
+/* Print Styles */
+
+@media print {
+    .card-header,
+    .btn,
+    .quick-actions,
+    .input-group-append {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+        margin-bottom: 1rem;
+    }
+    .form-control {
+        border: 1px solid #000 !important;
+        background: white !important;
+        color: #000 !important;
+    }
+}
+
+
+/* Dark Mode Support */
+
+@media (prefers-color-scheme: dark) {
+    .card {
+        background-color: #1e1e1e;
+        color: #fff;
+    }
+    .card-header {
+        background-color: #2d2d2d;
+        border-bottom-color: #404040;
+    }
+    .form-label {
+        color: #adb5bd;
+    }
+    .form-control {
+        background-color: #2d2d2d;
+        border-color: #404040;
+        color: #fff;
+    }
+    .form-control:focus {
+        background-color: #2d2d2d;
+        border-color: #007bff;
+        color: #fff;
+    }
+    .text-muted {
+        color: #6c757d !important;
+    }
+    .alert-info {
+        background-color: rgba(13, 202, 240, 0.2);
+        color: #8edff8;
+    }
+}
+
+
+/* Custom Checkbox Styling */
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.form-check-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+
+/* Section Dividers */
+
+.border-bottom {
+    border-color: #e9ecef !important;
+}
+
+
+/* Hover Effects */
+
+.btn:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease-in-out;
+}
+
+
+/* Configuration Status Indicators */
+
+.config-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.config-status.active {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.config-status.inactive {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.config-status.error {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+
+/* Provider-specific styling */
+
+.provider-twilio {
+    border-left: 4px solid #f22f46;
+}
+
+.provider-msg91 {
+    border-left: 4px solid #00b894;
+}
+
+.provider-textlocal {
+    border-left: 4px solid #0984e3;
+}
+
+.provider-fast2sms {
+    border-left: 4px solid #fdcb6e;
+}
+
+
+/* Animation for form sections */
+
+.config-section {
+    transition: all 0.3s ease-in-out;
+}
+
+.config-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}

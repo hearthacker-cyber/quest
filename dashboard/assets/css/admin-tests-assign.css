@@ -1,0 +1,173 @@
+/* Custom Styles for Assign Test Page */
+
+
+/* Card Header Styling */
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+
+/* Form Section Styling */
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h6 {
+    color: #495057;
+    font-weight: 600;
+}
+
+
+/* Tab Styling */
+
+.nav-tabs .nav-link {
+    color: #6c757d;
+    font-weight: 500;
+    border: none;
+    padding: 0.75rem 1.25rem;
+}
+
+.nav-tabs .nav-link.active {
+    color: #007bff;
+    background-color: transparent;
+    border-bottom: 2px solid #007bff;
+}
+
+
+/* Table Styling */
+
+#assignedTestsTable_wrapper {
+    padding: 0;
+}
+
+#assignedTestsTable {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#assignedTestsTable thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+}
+
+
+/* Badge Styling */
+
+.badge {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+}
+
+
+/* Button Group Styling */
+
+.btn-group-sm>.btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+
+/* Form Control Focus */
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+
+/* Alert Styling */
+
+.alert-info {
+    background-color: #e7f3ff;
+    border-color: #b3d9ff;
+    color: #0066cc;
+}
+
+
+/* Responsive Adjustments */
+
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    .btn-group-sm>.btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1rem;
+    }
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    .nav-tabs {
+        flex-direction: column;
+    }
+    .nav-tabs .nav-item {
+        margin-bottom: 0.5rem;
+    }
+}
+
+
+/* Custom Select Multiple Styling */
+
+.form-select[multiple] {
+    background-image: none;
+    padding: 0.5rem;
+}
+
+.form-select[multiple] option {
+    padding: 0.5rem;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.form-select[multiple] option:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+
+/* Duration Display */
+
+#defaultDurationDisplay {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+
+/* Loading State */
+
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+
+/* Success Message */
+
+.alert-success {
+    border-left: 4px solid #28a745;
+}
+
+
+/* Error Message */
+
+.alert-danger {
+    border-left: 4px solid #dc3545;
+}
