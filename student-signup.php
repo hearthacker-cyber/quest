@@ -72,7 +72,7 @@
                             <p class="text-muted">Create your account to start learning</p>
                         </div>
                         
-                        <form id="studentSignupForm" class="signup-form">
+                       <form id="studentSignupForm" class="signup-form" method="POST" action="student-signup-process.php">
                             <!-- Name Field -->
                             <div class="form-group mb-4">
                                 <label for="studentFullName" class="form-label">Student Full Name</label>
@@ -80,7 +80,7 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-user"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="studentFullName" name="fullName" placeholder="Enter student full name" required>
+                                     <input type="text" class="form-control" id="studentFullName" name="name" placeholder="Enter student full name" required>
                                 </div>
                                 <div class="invalid-feedback" id="studentNameError">Please enter student's full name</div>
                             </div>
@@ -104,7 +104,7 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-lock"></i>
                                     </span>
-                                    <input type="password" class="form-control" id="studentPassword" name="password" placeholder="Create a password" required>
+                                      <input type="password" class="form-control" id="studentPassword" name="password" placeholder="Create a password" required>
                                     <button type="button" class="input-group-text toggle-password" id="toggleStudentPassword">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -131,7 +131,7 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-graduation-cap"></i>
                                     </span>
-                                    <select class="form-control" id="studentGrade" name="grade" required>
+                                        <select class="form-control" id="studentGrade" name="grade" required>   
                                         <option value="">Select your grade</option>
                                         <option value="1">Grade 1</option>
                                         <option value="2">Grade 2</option>
