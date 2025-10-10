@@ -42,17 +42,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('confirmPassword');
     const gradeSelect = document.getElementById('grade');
-    const gradeFormGroup = document.querySelector('.form-group:has(#grade)');
+    const gradeField = document.getElementById('gradeField');
     const termsCheckbox = document.getElementById('terms');
     const togglePasswordBtn = document.getElementById('togglePassword');
     const userTypeCards = document.querySelectorAll('.user-type-card');
+    const userTypeInput = document.getElementById('userType');
     const signupTitle = document.getElementById('signupTitle');
     const signupSubtitle = document.getElementById('signupSubtitle');
     const signupAvatar = document.getElementById('signupAvatar');
     const signupBtnText = document.querySelector('.btn-text');
     const signupBtn = document.querySelector('.signup-btn');
-
-    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
 
     // Current user type
     let currentUserType = 'student';
@@ -68,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Update user type
             currentUserType = this.getAttribute('data-user-type');
+            userTypeInput.value = currentUserType;
 
             // Update signup form based on user type
             updateSignupForm(currentUserType);
@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Show grade selection and make it required
-            if (gradeFormGroup) {
-                gradeFormGroup.style.display = 'block';
+            if (gradeField) {
+                gradeField.style.display = 'block';
             }
             if (gradeSelect) {
                 gradeSelect.required = true;
@@ -131,8 +131,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Hide grade selection and make it not required for parents
-            if (gradeFormGroup) {
-                gradeFormGroup.style.display = 'none';
+            if (gradeField) {
+                gradeField.style.display = 'none';
             }
             if (gradeSelect) {
                 gradeSelect.required = false;
@@ -284,8 +284,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form Submission Handler
     if (signupForm) {
         signupForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
             // Validate all fields
             let isValid = true;
 
@@ -339,7 +337,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 isValid = false;
             }
 
-            if (isValid) {
+            if (!isValid) {
+                e.preventDefault();
+
                 // Show loading state
                 const btnText = signupBtn.querySelector('.btn-text');
                 const btnLoading = signupBtn.querySelector('.btn-loading');
@@ -348,34 +348,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 btnLoading.classList.remove('d-none');
                 signupBtn.disabled = true;
 
-                // Simulate API call (replace with actual API call)
+                // Re-enable after validation
                 setTimeout(() => {
-                    // Hide loading state
                     btnText.classList.remove('d-none');
                     btnLoading.classList.add('d-none');
                     signupBtn.disabled = false;
-
-                    // Show success modal
-                    successModal.show();
-
-                    // Reset form
-                    signupForm.reset();
-
-                    // Reset validation states
-                    [fullNameInput, emailInput, passwordInput, confirmPasswordInput, gradeSelect, termsCheckbox].forEach(input => {
-                        if (input) resetValidation(input);
-                    });
-
-                    // Log signup data (replace with actual form submission)
-                    console.log('Signup Data:', {
-                        userType: currentUserType,
-                        name: fullNameInput.value,
-                        email: emailInput.value,
-                        grade: currentUserType === 'student' ? gradeSelect.value : 'N/A',
-                        timestamp: new Date().toISOString()
-                    });
-
-                }, 2000);
+                }, 1000);
             }
         });
     }

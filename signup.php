@@ -1,3 +1,64 @@
+<?php
+session_start();
+require_once 'config.php';
+
+$error = '';
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get form data
+    $name = trim($_POST['fullName']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirmPassword'];
+    $userType = $_POST['userType'];
+    $grade = isset($_POST['grade']) ? (int)$_POST['grade'] : null;
+    $terms = isset($_POST['terms']) ? true : false;
+
+    // Validation
+    if (empty($name) || empty($email) || empty($password) || empty($confirmPassword) || !$terms) {
+        $error = 'All fields are required and you must agree to the terms.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'Please enter a valid email address.';
+    } elseif (strlen($password) < 6) {
+        $error = 'Password must be at least 6 characters long.';
+    } elseif ($password !== $confirmPassword) {
+        $error = 'Passwords do not match.';
+    } elseif ($userType === 'student' && empty($grade)) {
+        $error = 'Please select your grade level.';
+    } else {
+        try {
+            // Check if email already exists
+            $checkEmail = $conn->prepare("SELECT id FROM users WHERE email = ?");
+            $checkEmail->execute([$email]);
+            
+            if ($checkEmail->rowCount() > 0) {
+                $error = 'Email address is already registered.';
+            } else {
+                // Hash password
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                
+                // Insert user
+                $insertUser = $conn->prepare("INSERT INTO users (name, email, password, role, grade) VALUES (?, ?, ?, ?, ?)");
+                $insertUser->execute([$name, $email, $hashedPassword, $userType, $grade]);
+                
+                if ($insertUser->rowCount() > 0) {
+                    $success = 'Account created successfully!';
+                    $_SESSION['user_id'] = $conn->lastInsertId();
+                    $_SESSION['user_name'] = $name;
+                    $_SESSION['user_role'] = $userType;
+                    $_SESSION['user_email'] = $email;
+                } else {
+                    $error = 'Failed to create account. Please try again.';
+                }
+            }
+        } catch (PDOException $e) {
+            $error = 'Database error: ' . $e->getMessage();
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,6 +138,23 @@
                 </div>
                 
                 <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
+                    <!-- Error/Success Messages -->
+                    <?php if ($error): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <?php echo htmlspecialchars($error); ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($success): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <?php echo htmlspecialchars($success); ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <?php endif; ?>
+
                     <!-- Signup Form Card -->
                     <div class="signup-card">
                         <div class="signup-header text-center mb-4">
@@ -95,7 +173,9 @@
                             <p class="text-muted" id="signupSubtitle">Create your account to start learning</p>
                         </div>
                         
-                        <form id="signupForm" class="signup-form">
+                        <form id="signupForm" class="signup-form" method="POST" action="">
+                            <input type="hidden" name="userType" id="userType" value="student">
+                            
                             <!-- Name Field -->
                             <div class="form-group mb-4">
                                 <label for="fullName" class="form-label">Full Name</label>
@@ -103,7 +183,10 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-user"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                                    <input type="text" class="form-control" id="fullName" name="fullName" 
+                                           placeholder="Enter your full name" 
+                                           value="<?php echo isset($_POST['fullName']) ? htmlspecialchars($_POST['fullName']) : ''; ?>" 
+                                           required>
                                 </div>
                                 <div class="invalid-feedback" id="nameError">Please enter your full name</div>
                             </div>
@@ -115,7 +198,10 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-envelope"></i>
                                     </span>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           placeholder="Enter your email" 
+                                           value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" 
+                                           required>
                                 </div>
                                 <div class="invalid-feedback" id="emailError">Please enter a valid email address</div>
                             </div>
@@ -127,7 +213,8 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-lock"></i>
                                     </span>
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" required>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Create a password" required>
                                     <button type="button" class="input-group-text toggle-password" id="togglePassword">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -142,13 +229,14 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-lock"></i>
                                     </span>
-                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+                                           placeholder="Confirm your password" required>
                                 </div>
                                 <div class="invalid-feedback" id="confirmPasswordError">Passwords do not match</div>
                             </div>
                             
                             <!-- Grade Selection -->
-                            <div class="form-group mb-4">
+                            <div class="form-group mb-4" id="gradeField">
                                 <label for="grade" class="form-label">Grade Level</label>
                                 <div class="input-group">
                                     <span class="input-group-text">
@@ -156,14 +244,12 @@
                                     </span>
                                     <select class="form-control" id="grade" name="grade" required>
                                         <option value="">Select your grade</option>
-                                        <option value="1">Grade 1</option>
-                                        <option value="2">Grade 2</option>
-                                        <option value="3">Grade 3</option>
-                                        <option value="4">Grade 4</option>
-                                        <option value="5">Grade 5</option>
-                                        <option value="6">Grade 6</option>
-                                        <option value="7">Grade 7</option>
-                                        <option value="8">Grade 8</option>
+                                        <?php for ($i = 1; $i <= 8; $i++): ?>
+                                            <option value="<?php echo $i; ?>" 
+                                                <?php echo (isset($_POST['grade']) && $_POST['grade'] == $i) ? 'selected' : ''; ?>>
+                                                Grade <?php echo $i; ?>
+                                            </option>
+                                        <?php endfor; ?>
                                     </select>
                                 </div>
                                 <div class="invalid-feedback" id="gradeError">Please select your grade level</div>
@@ -172,7 +258,8 @@
                             <!-- Terms Acceptance -->
                             <div class="form-group mb-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                    <input class="form-check-input" type="checkbox" id="terms" name="terms" 
+                                           <?php echo (isset($_POST['terms']) && $_POST['terms']) ? 'checked' : ''; ?> required>
                                     <label class="form-check-label" for="terms">
                                         I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
                                     </label>
@@ -218,12 +305,13 @@
     </section>
 
     <!-- Success Modal -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <?php if ($success): ?>
+    <div class="modal fade show" id="successModal" tabindex="-1" aria-hidden="false" style="display: block; background: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Account Created Successfully!</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="hideModal()"></button>
                 </div>
                 <div class="modal-body text-center">
                     <div class="mb-4">
@@ -242,7 +330,7 @@
                         <a href="student-dashboard.php" class="btn btn-warning">
                             <i class="fas fa-rocket me-2"></i>Start Learning
                         </a>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary" onclick="hideModal()">
                             <i class="fas fa-cog me-2"></i>Setup Profile
                         </button>
                     </div>
@@ -250,6 +338,7 @@
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <?php include_once('layouts/footer.php');?>
 
@@ -258,5 +347,11 @@
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src="scripts/home.js"></script>
     <script src="scripts/signup.js"></script>
+    
+    <script>
+        function hideModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>

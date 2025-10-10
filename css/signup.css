@@ -648,3 +648,29 @@ select.form-control {
     color: #333 !important;
     transform: translateY(-2px);
 }
+
+
+/* Grade field transition */
+
+#gradeField {
+    transition: all 0.3s ease-in-out;
+}
+
+
+/* Alert styles */
+
+.alert {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #51cf66, #40c057);
+    color: white;
+}
