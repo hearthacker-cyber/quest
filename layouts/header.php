@@ -41,7 +41,7 @@
                         <i class="fas fa-user-plus me-2"></i>Sign Up
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="student-signup.php"><i class="fas fa-graduation-cap me-2"></i>Student Sign Up</a></li>
+                        <li><a class="dropdown-item" href="signup.php"><i class="fas fa-graduation-cap me-2"></i>Student Sign Up</a></li>
                         <li><a class="dropdown-item" href="parent-signup.php"><i class="fas fa-user-friends me-2"></i>Parent Sign Up</a></li>
                     </ul>
                 </div>

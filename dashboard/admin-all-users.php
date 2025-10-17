@@ -72,7 +72,7 @@
                                         <i class="fas fa-cog me-1"></i> User Tools <i class="mdi mdi-chevron-down"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item" href="admin/users.php?action=add"><i class="fas fa-user-plus me-2"></i> Add New User</a>
+                                        <a class="dropdown-item" href="add_student.php"><i class="fas fa-user-plus me-2"></i> Add New User</a>
                                         <a class="dropdown-item" href="#"><i class="fas fa-file-export me-2"></i> Export Users</a>
                                         <a class="dropdown-item" href="#"><i class="fas fa-users-cog me-2"></i> Bulk Actions</a>
                                         <div class="dropdown-divider"></div>
@@ -91,7 +91,16 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
-                                        <h4 class="mb-0 user-stat-number">1,500</h4>
+                                        <?php
+                                        // Include config
+                                        include('config.php');
+                                        
+                                        // Get total users count
+                                        $stmt = $conn->prepare("SELECT COUNT(*) as total_users FROM users");
+                                        $stmt->execute();
+                                        $total_users = $stmt->fetch()['total_users'];
+                                        ?>
+                                        <h4 class="mb-0 user-stat-number"><?php echo $total_users; ?></h4>
                                         <p class="text-muted mb-0">Total Users</p>
                                     </div>
                                     <div class="flex-shrink-0">
@@ -112,12 +121,18 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
-                                        <h4 class="mb-0 user-stat-number">1,200</h4>
-                                        <p class="text-muted mb-0">Active Users</p>
+                                        <?php
+                                        // Get students count
+                                        $stmt = $conn->prepare("SELECT COUNT(*) as students_count FROM users WHERE role = 'student'");
+                                        $stmt->execute();
+                                        $students_count = $stmt->fetch()['students_count'];
+                                        ?>
+                                        <h4 class="mb-0 user-stat-number"><?php echo $students_count; ?></h4>
+                                        <p class="text-muted mb-0">Students</p>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <div class="user-stat-icon bg-success">
-                                            <i class="fas fa-user-check"></i>
+                                            <i class="fas fa-user-graduate"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -133,12 +148,18 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
-                                        <h4 class="mb-0 user-stat-number">250</h4>
-                                        <p class="text-muted mb-0">Teachers</p>
+                                        <?php
+                                        // Get parents count
+                                        $stmt = $conn->prepare("SELECT COUNT(*) as parents_count FROM users WHERE role = 'parent'");
+                                        $stmt->execute();
+                                        $parents_count = $stmt->fetch()['parents_count'];
+                                        ?>
+                                        <h4 class="mb-0 user-stat-number"><?php echo $parents_count; ?></h4>
+                                        <p class="text-muted mb-0">Parents</p>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <div class="user-stat-icon bg-info">
-                                            <i class="fas fa-chalkboard-teacher"></i>
+                                            <i class="fas fa-user-friends"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +175,11 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
-                                        <h4 class="mb-0 user-stat-number">50</h4>
+                                        <?php
+                                        // Get suspended users count (assuming none for now)
+                                        $suspended_users = 0;
+                                        ?>
+                                        <h4 class="mb-0 user-stat-number"><?php echo $suspended_users; ?></h4>
                                         <p class="text-muted mb-0">Suspended</p>
                                     </div>
                                     <div class="flex-shrink-0">
@@ -190,9 +215,17 @@
                                         <select class="form-select" id="roleFilter">
                                             <option value="">All Roles</option>
                                             <option value="student">Student</option>
-                                            <option value="teacher">Teacher</option>
-                                            <option value="admin">Admin</option>
-                                            <option value="moderator">Moderator</option>
+                                            <option value="parent">Parent</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xl-2 col-md-6">
+                                        <select class="form-select" id="gradeFilter">
+                                            <option value="">All Grades</option>
+                                            <option value="1">Grade 1</option>
+                                            <option value="2">Grade 2</option>
+                                            <option value="3">Grade 3</option>
+                                            <option value="4">Grade 4</option>
+                                            <option value="5">Grade 5</option>
                                         </select>
                                     </div>
                                     <div class="col-xl-2 col-md-6">
@@ -201,11 +234,7 @@
                                             <option value="active">Active</option>
                                             <option value="inactive">Inactive</option>
                                             <option value="suspended">Suspended</option>
-                                            <option value="pending">Pending</option>
                                         </select>
-                                    </div>
-                                    <div class="col-xl-2 col-md-6">
-                                        <input type="date" class="form-control" id="dateFromFilter" placeholder="From Date">
                                     </div>
                                     <div class="col-xl-2 col-md-6">
                                         <div class="d-grid">
@@ -220,13 +249,13 @@
                                     <div class="col-12">
                                         <div class="d-flex flex-wrap gap-2 align-items-center">
                                             <span class="text-muted">Quick Actions:</span>
-                                            <button class="btn btn-outline-primary btn-sm">
+                                            <button class="btn btn-outline-primary btn-sm" id="refreshTable">
                                                 <i class="fas fa-sync-alt me-1"></i> Refresh
                                             </button>
-                                            <button class="btn btn-outline-success btn-sm">
+                                            <button class="btn btn-outline-success btn-sm" id="exportTable">
                                                 <i class="fas fa-file-export me-1"></i> Export
                                             </button>
-                                            <button class="btn btn-outline-info btn-sm">
+                                            <button class="btn btn-outline-info btn-sm" id="printTable">
                                                 <i class="fas fa-print me-1"></i> Print
                                             </button>
                                         </div>
@@ -257,224 +286,93 @@
                                                 <th>Name</th>
                                                 <th>Email</th>
                                                 <th>Role</th>
+                                                <th>Grade</th>
                                                 <th>Status</th>
                                                 <th>Registered On</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- Sample Data - Replace with dynamic data from your backend -->
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#USR001</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Rahul+Sharma&background=4361ee&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Rahul Sharma</h6>
-                                                            <small class="text-muted">Last active: 2 hours ago</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>rahul.sharma@example.com</td>
-                                                <td>
-                                                    <span class="badge bg-primary">Student</span>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-success">Active</span>
-                                                </td>
-                                                <td>15 Dec 2023</td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit User">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Suspend User">
-                                                            <i class="fas fa-user-slash"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete User">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#USR002</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Priya+Patel&background=4cc9f0&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Priya Patel</h6>
-                                                            <small class="text-muted">Last active: 1 day ago</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>priya.patel@example.com</td>
-                                                <td>
-                                                    <span class="badge bg-info">Teacher</span>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-success">Active</span>
-                                                </td>
-                                                <td>14 Dec 2023</td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit User">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Suspend User">
-                                                            <i class="fas fa-user-slash"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete User">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#USR003</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Amit+Kumar&background=f72585&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Amit Kumar</h6>
-                                                            <small class="text-muted">Last active: 5 minutes ago</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>amit.kumar@example.com</td>
-                                                <td>
-                                                    <span class="badge bg-danger">Admin</span>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-success">Active</span>
-                                                </td>
-                                                <td>13 Dec 2023</td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit User">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Suspend User">
-                                                            <i class="fas fa-user-slash"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete User">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#USR004</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Neha+Gupta&background=7209b7&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Neha Gupta</h6>
-                                                            <small class="text-muted">Last active: 3 days ago</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>neha.gupta@example.com</td>
-                                                <td>
-                                                    <span class="badge bg-primary">Student</span>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-warning text-dark">Inactive</span>
-                                                </td>
-                                                <td>12 Dec 2023</td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit User">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Activate User">
-                                                            <i class="fas fa-user-check"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete User">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#USR005</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Rohan+Mehta&background=f8961e&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Rohan Mehta</h6>
-                                                            <small class="text-muted">Last active: 1 week ago</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>rohan.mehta@example.com</td>
-                                                <td>
-                                                    <span class="badge bg-secondary">Moderator</span>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-danger">Suspended</span>
-                                                </td>
-                                                <td>11 Dec 2023</td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit User">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" title="Unsuspend User">
-                                                            <i class="fas fa-user-check"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete User">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <!-- Add more sample rows as needed -->
+                                            <?php
+                                            // Fetch all users from database (both students and parents)
+                                            try {
+                                                $stmt = $conn->prepare("SELECT id, name, email, role, grade, created_at FROM users ORDER BY created_at DESC");
+                                                $stmt->execute();
+                                                $users = $stmt->fetchAll();
+                                                
+                                                if (count($users) > 0) {
+                                                    foreach ($users as $user) {
+                                                        // Generate avatar based on name and role
+                                                        $avatar_bg_color = $user['role'] == 'student' ? '4361ee' : 'f39c12';
+                                                        $avatar_url = "https://ui-avatars.com/api/?name=" . urlencode($user['name']) . "&background=" . $avatar_bg_color . "&color=fff";
+                                                        
+                                                        // Format date
+                                                        $registered_date = date('d M Y', strtotime($user['created_at']));
+                                                        
+                                                        // Determine status (for now, all are active)
+                                                        $status = "Active";
+                                                        $status_badge = "bg-success";
+                                                        
+                                                        // Role badge color
+                                                        $role_badge = $user['role'] == 'student' ? "bg-primary" : "bg-warning";
+                                                        $role_text = $user['role'] == 'student' ? "Student" : "Parent";
+                                                        
+                                                        // Grade display - only for students
+                                                        $grade_display = $user['role'] == 'student' ? 
+                                                            '<span class="badge bg-info">Grade ' . $user['grade'] . '</span>' : 
+                                                            '<span class="badge bg-secondary">N/A</span>';
+                                                        
+                                                        echo '
+                                                        <tr>
+                                                            <td>
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input row-checkbox" type="checkbox" value="' . $user['id'] . '">
+                                                                </div>
+                                                            </td>
+                                                            <td>#' . strtoupper(substr($user['role'], 0, 3)) . str_pad($user['id'], 3, '0', STR_PAD_LEFT) . '</td>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <img src="' . $avatar_url . '" alt="" class="rounded-circle me-2" width="32" height="32">
+                                                                    <div>
+                                                                        <h6 class="mb-0">' . htmlspecialchars($user['name']) . '</h6>
+                                                                        <small class="text-muted">Last active: Recently</small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>' . htmlspecialchars($user['email']) . '</td>
+                                                            <td>
+                                                                <span class="badge ' . $role_badge . '">' . $role_text . '</span>
+                                                            </td>
+                                                            <td>' . $grade_display . '</td>
+                                                            <td>
+                                                                <span class="badge ' . $status_badge . '">' . $status . '</span>
+                                                            </td>
+                                                            <td>' . $registered_date . '</td>
+                                                            <td>
+                                                                <div class="btn-group btn-group-sm" role="group">
+                                                                    <a href="view_user.php?id=' . $user['id'] . '" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </a>
+                                                                    <a href="edit_user.php?id=' . $user['id'] . '" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit User">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                    <a href="suspend_user.php?id=' . $user['id'] . '" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Suspend User" onclick="return confirm(\'Are you sure you want to suspend this user?\')">
+                                                                        <i class="fas fa-user-slash"></i>
+                                                                    </a>
+                                                                    <a href="delete_user.php?id=' . $user['id'] . '" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete User" onclick="return confirm(\'Are you sure you want to delete this user? This action cannot be undone.\')">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>';
+                                                    }
+                                                } else {
+                                                    echo '<tr><td colspan="9" class="text-center">No users found.</td></tr>';
+                                                }
+                                            } catch (PDOException $e) {
+                                                echo '<tr><td colspan="9" class="text-center text-danger">Error fetching users: ' . $e->getMessage() . '</td></tr>';
+                                            }
+                                            ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -522,7 +420,65 @@
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap5.min.js"></script>
 
     <!-- Custom Users JS -->
-    <script src="assets/js/pages/admin-users.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            var table = $('#users-datatable').DataTable({
+                responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                pageLength: 10,
+                language: {
+                    paginate: {
+                        previous: "<i class='fas fa-chevron-left'></i>",
+                        next: "<i class='fas fa-chevron-right'></i>"
+                    }
+                },
+                drawCallback: function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                }
+            });
+            
+            // Select All checkbox functionality
+            $('#selectAll').on('click', function() {
+                $('.row-checkbox').prop('checked', this.checked);
+            });
+            
+            // Apply filters
+            $('#applyFilters').on('click', function() {
+                var searchValue = $('#usersSearch').val();
+                var roleValue = $('#roleFilter').val();
+                var gradeValue = $('#gradeFilter').val();
+                var statusValue = $('#statusFilter').val();
+                
+                // Combine filters
+                table.column(4).search(roleValue).draw(); // Role column
+                table.column(5).search(gradeValue).draw(); // Grade column
+                table.column(6).search(statusValue).draw(); // Status column
+                table.search(searchValue).draw();
+            });
+            
+            // Refresh table
+            $('#refreshTable').on('click', function() {
+                location.reload();
+            });
+            
+            // Export table
+            $('#exportTable').on('click', function() {
+                $('.buttons-excel').trigger('click');
+            });
+            
+            // Print table
+            $('#printTable').on('click', function() {
+                $('.buttons-print').trigger('click');
+            });
+            
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
 
     <script src="assets/js/app.js"></script>
 

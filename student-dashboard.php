@@ -1,5 +1,221 @@
 <?php
-// student_profile.php
+session_start();
+
+// Database configuration
+$servername = "srv1837.hstgr.io";
+$username = "u329947844_quest";
+$password = "Ariharan@2025";
+$dbname = "u329947844_quest";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Get student ID from session or URL parameter
+$student_id = isset($_GET['id']) ? intval($_GET['id']) : (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1);
+
+// Fetch student data
+function getStudentData($conn, $student_id) {
+    $sql = "SELECT * FROM users WHERE id = ? AND role = 'student'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc();
+    }
+    return null;
+}
+
+// Fetch student statistics
+function getStudentStats($conn, $student_id) {
+    $stats = [
+        'overall_score' => 0,
+        'questions_solved' => 0,
+        'tests_completed' => 0,
+        'streak_days' => 0,
+        'points_earned' => 0,
+        'national_rank' => 'Top 15%'
+    ];
+    
+    // Overall score (average of all test scores)
+    $sql = "SELECT AVG(score) as avg_score FROM test_results WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $stats['overall_score'] = round($row['avg_score'] ?? 0);
+    }
+    
+    // Questions solved
+    $sql = "SELECT COUNT(*) as count FROM user_answers WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $stats['questions_solved'] = $row['count'];
+    }
+    
+    // Tests completed
+    $sql = "SELECT COUNT(*) as count FROM test_results WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $stats['tests_completed'] = $row['count'];
+    }
+    
+    // Streak days (you'll need to implement this logic based on your activity tracking)
+    $stats['streak_days'] = 3; // Placeholder
+    
+    // Points earned
+    $sql = "SELECT SUM(points_earned) as total_points FROM user_points WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $stats['points_earned'] = $row['total_points'] ?? 0;
+    }
+    
+    return $stats;
+}
+
+// Fetch subject performance
+function getSubjectPerformance($conn, $student_id) {
+    $subjects = ['Mathematics', 'Reading', 'Science', 'Logic'];
+    $performance = [];
+    
+    foreach ($subjects as $subject) {
+        $sql = "SELECT AVG(score) as avg_score FROM test_results 
+                WHERE user_id = ? AND subject = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("is", $student_id, $subject);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $score = 0;
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $score = round($row['avg_score'] ?? 0);
+        }
+        
+        $performance[] = [
+            'subject' => $subject,
+            'score' => $score,
+            'trend' => 'up', // You can calculate this based on previous scores
+            'change' => rand(2, 12) // Placeholder
+        ];
+    }
+    
+    return $performance;
+}
+
+// Fetch recent activity
+function getRecentActivity($conn, $student_id) {
+    $activities = [];
+    
+    // Get recent test results
+    $sql = "SELECT test_name, score, subject, completed_at FROM test_results 
+            WHERE user_id = ? ORDER BY completed_at DESC LIMIT 4";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    while ($row = $result->fetch_assoc()) {
+        $activities[] = [
+            'type' => 'test',
+            'title' => 'Completed ' . $row['test_name'],
+            'description' => $row['subject'] . ' - Score: ' . $row['score'] . '%',
+            'time' => $row['completed_at'],
+            'icon' => 'file-alt'
+        ];
+    }
+    
+    // Add some placeholder achievements (you'll need to implement achievements system)
+    $achievements = [
+        ['type' => 'achievement', 'title' => 'Earned New Badge', 'description' => '"Math Wizard" for solving 100 math problems', 'time' => '1 day ago', 'icon' => 'star'],
+        ['type' => 'study', 'title' => 'Studied New Topic', 'description' => 'Pattern Recognition - Advanced Level', 'time' => '2 days ago', 'icon' => 'book']
+    ];
+    
+    return array_merge($activities, $achievements);
+}
+
+// Fetch learning goals
+function getLearningGoals($conn, $student_id) {
+    $goals = [];
+    
+    $sql = "SELECT goal_title, goal_description, progress, due_date FROM learning_goals 
+            WHERE user_id = ? AND status = 'active' ORDER BY due_date ASC LIMIT 3";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $goals[] = $row;
+        }
+    } else {
+        // Default goals if none exist
+        $goals = [
+            ['goal_title' => 'Master Multiplication', 'goal_description' => 'Complete multiplication tables up to 12x12', 'progress' => 65, 'due_date' => '3 days'],
+            ['goal_title' => 'Reading Challenge', 'goal_description' => 'Read and comprehend 5 new storybooks', 'progress' => 40, 'due_date' => '1 week'],
+            ['goal_title' => 'Science Project', 'goal_description' => 'Complete plant growth observation experiment', 'progress' => 20, 'due_date' => '2 weeks']
+        ];
+    }
+    
+    return $goals;
+}
+
+// Fetch weekly activity
+function getWeeklyActivity($conn, $student_id) {
+    $weekly_data = [];
+    $days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    
+    foreach ($days as $day) {
+        // This is a simplified version - you'll need to implement actual activity tracking
+        $weekly_data[] = [
+            'day' => $day,
+            'activity' => rand(40, 95) // Placeholder data
+        ];
+    }
+    
+    return $weekly_data;
+}
+
+// Get all data
+$student_data = getStudentData($conn, $student_id);
+$student_stats = getStudentStats($conn, $student_id);
+$subject_performance = getSubjectPerformance($conn, $student_id);
+$recent_activity = getRecentActivity($conn, $student_id);
+$learning_goals = getLearningGoals($conn, $student_id);
+$weekly_activity = getWeeklyActivity($conn, $student_id);
+
+// Close connection
+$conn->close();
+
+// If no student data found, use defaults
+if (!$student_data) {
+    $student_data = [
+        'name' => 'Alex Johnson',
+        'grade' => 3,
+        'email' => 'alex.johnson@example.com'
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,8 +250,8 @@
                                 <div class="online-status"></div>
                             </div>
                             <div class="profile-info">
-                                <h1 class="student-name">Alex Johnson</h1>
-                                <p class="student-grade">Grade 3 Student</p>
+                                <h1 class="student-name"><?php echo htmlspecialchars($student_data['name']); ?></h1>
+                                <p class="student-grade">Grade <?php echo htmlspecialchars($student_data['grade']); ?> Student</p>
                                 <div class="badges">
                                     <span class="badge badge-primary">Math Whiz</span>
                                     <span class="badge badge-success">Reading Pro</span>
@@ -45,19 +261,19 @@
                         </div>
                         <div class="profile-stats">
                             <div class="stat-item">
-                                <div class="stat-number">87%</div>
+                                <div class="stat-number"><?php echo $student_stats['overall_score']; ?>%</div>
                                 <div class="stat-label">Overall Score</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">156</div>
+                                <div class="stat-number"><?php echo $student_stats['questions_solved']; ?></div>
                                 <div class="stat-label">Questions Solved</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">12</div>
+                                <div class="stat-number"><?php echo $student_stats['tests_completed']; ?></div>
                                 <div class="stat-label">Tests Completed</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">5</div>
+                                <div class="stat-number"><?php echo $student_stats['streak_days']; ?></div>
                                 <div class="stat-label">Streak Days</div>
                             </div>
                         </div>
@@ -93,21 +309,21 @@
                                 <div class="quick-stat">
                                     <i class="fas fa-trophy" style="color: var(--primary-yellow);"></i>
                                     <div>
-                                        <div class="value">Top 15%</div>
+                                        <div class="value"><?php echo $student_stats['national_rank']; ?></div>
                                         <div class="label">National Rank</div>
                                     </div>
                                 </div>
                                 <div class="quick-stat">
                                     <i class="fas fa-bolt" style="color: var(--accent-orange);"></i>
                                     <div>
-                                        <div class="value">3 Days</div>
+                                        <div class="value"><?php echo $student_stats['streak_days']; ?> Days</div>
                                         <div class="label">Learning Streak</div>
                                     </div>
                                 </div>
                                 <div class="quick-stat">
                                     <i class="fas fa-star" style="color: var(--accent-purple);"></i>
                                     <div>
-                                        <div class="value">245</div>
+                                        <div class="value"><?php echo $student_stats['points_earned']; ?></div>
                                         <div class="label">Points Earned</div>
                                     </div>
                                 </div>
@@ -155,42 +371,20 @@
                         <div class="sidebar-card" data-aos="fade-right" data-aos-delay="200">
                             <h5><i class="fas fa-bullseye me-2"></i>Learning Goals</h5>
                             <div class="goals-list">
+                                <?php foreach($learning_goals as $goal): ?>
                                 <div class="goal-item">
                                     <div class="goal-progress">
                                         <div class="progress">
-                                            <div class="progress-bar" style="width: 75%"></div>
+                                            <div class="progress-bar" style="width: <?php echo $goal['progress']; ?>%"></div>
                                         </div>
-                                        <span>75%</span>
+                                        <span><?php echo $goal['progress']; ?>%</span>
                                     </div>
                                     <div class="goal-info">
-                                        <div class="goal-title">Complete Grade 3 Math</div>
-                                        <div class="goal-subtitle">15/20 topics mastered</div>
+                                        <div class="goal-title"><?php echo htmlspecialchars($goal['goal_title']); ?></div>
+                                        <div class="goal-subtitle"><?php echo htmlspecialchars($goal['goal_description']); ?></div>
                                     </div>
                                 </div>
-                                <div class="goal-item">
-                                    <div class="goal-progress">
-                                        <div class="progress">
-                                            <div class="progress-bar" style="width: 40%"></div>
-                                        </div>
-                                        <span>40%</span>
-                                    </div>
-                                    <div class="goal-info">
-                                        <div class="goal-title">Improve Reading Speed</div>
-                                        <div class="goal-subtitle">Read 20 books this month</div>
-                                    </div>
-                                </div>
-                                <div class="goal-item">
-                                    <div class="goal-progress">
-                                        <div class="progress">
-                                            <div class="progress-bar" style="width: 90%"></div>
-                                        </div>
-                                        <span>90%</span>
-                                    </div>
-                                    <div class="goal-info">
-                                        <div class="goal-title">Master Logical Reasoning</div>
-                                        <div class="goal-subtitle">Solve 100 pattern questions</div>
-                                    </div>
-                                </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                     </div>
@@ -212,54 +406,29 @@
                             </div>
                         </div>
                         <div class="performance-cards">
+                            <?php foreach($subject_performance as $subject): ?>
                             <div class="performance-card">
-                                <div class="performance-icon math">
-                                    <i class="fas fa-calculator"></i>
+                                <div class="performance-icon <?php echo strtolower($subject['subject']); ?>">
+                                    <i class="fas fa-<?php 
+                                        switch($subject['subject']) {
+                                            case 'Mathematics': echo 'calculator'; break;
+                                            case 'Reading': echo 'book'; break;
+                                            case 'Science': echo 'flask'; break;
+                                            case 'Logic': echo 'puzzle-piece'; break;
+                                            default: echo 'chart-bar';
+                                        }
+                                    ?>"></i>
                                 </div>
                                 <div class="performance-info">
-                                    <div class="performance-title">Mathematics</div>
-                                    <div class="performance-score">82%</div>
-                                    <div class="performance-trend up">
-                                        <i class="fas fa-arrow-up"></i> 5% from last month
+                                    <div class="performance-title"><?php echo $subject['subject']; ?></div>
+                                    <div class="performance-score"><?php echo $subject['score']; ?>%</div>
+                                    <div class="performance-trend <?php echo $subject['trend']; ?>">
+                                        <i class="fas fa-arrow-<?php echo $subject['trend']; ?>"></i> 
+                                        <?php echo $subject['change']; ?>% from last month
                                     </div>
                                 </div>
                             </div>
-                            <div class="performance-card">
-                                <div class="performance-icon reading">
-                                    <i class="fas fa-book"></i>
-                                </div>
-                                <div class="performance-info">
-                                    <div class="performance-title">Reading</div>
-                                    <div class="performance-score">91%</div>
-                                    <div class="performance-trend up">
-                                        <i class="fas fa-arrow-up"></i> 8% from last month
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="performance-card">
-                                <div class="performance-icon science">
-                                    <i class="fas fa-flask"></i>
-                                </div>
-                                <div class="performance-info">
-                                    <div class="performance-title">Science</div>
-                                    <div class="performance-score">78%</div>
-                                    <div class="performance-trend down">
-                                        <i class="fas fa-arrow-down"></i> 2% from last month
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="performance-card">
-                                <div class="performance-icon logic">
-                                    <i class="fas fa-puzzle-piece"></i>
-                                </div>
-                                <div class="performance-info">
-                                    <div class="performance-title">Logic</div>
-                                    <div class="performance-score">95%</div>
-                                    <div class="performance-trend up">
-                                        <i class="fas fa-arrow-up"></i> 12% from last month
-                                    </div>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
@@ -275,34 +444,12 @@
                                     <span>Questions Solved</span>
                                 </div>
                                 <div class="chart-bars">
+                                    <?php foreach($weekly_activity as $day_data): ?>
                                     <div class="chart-bar">
-                                        <div class="bar-fill" style="height: 70%"></div>
-                                        <span>Mon</span>
+                                        <div class="bar-fill" style="height: <?php echo $day_data['activity']; ?>%"></div>
+                                        <span><?php echo $day_data['day']; ?></span>
                                     </div>
-                                    <div class="chart-bar">
-                                        <div class="bar-fill" style="height: 85%"></div>
-                                        <span>Tue</span>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <div class="bar-fill" style="height: 60%"></div>
-                                        <span>Wed</span>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <div class="bar-fill" style="height: 95%"></div>
-                                        <span>Thu</span>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <div class="bar-fill" style="height: 75%"></div>
-                                        <span>Fri</span>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <div class="bar-fill" style="height: 50%"></div>
-                                        <span>Sat</span>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <div class="bar-fill" style="height: 40%"></div>
-                                        <span>Sun</span>
-                                    </div>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>
@@ -314,46 +461,18 @@
                             <h3><i class="fas fa-history me-2"></i>Recent Activity</h3>
                         </div>
                         <div class="activity-timeline">
+                            <?php foreach($recent_activity as $activity): ?>
                             <div class="activity-item">
-                                <div class="activity-icon completed">
-                                    <i class="fas fa-check"></i>
+                                <div class="activity-icon <?php echo $activity['type']; ?>">
+                                    <i class="fas fa-<?php echo $activity['icon']; ?>"></i>
                                 </div>
                                 <div class="activity-content">
-                                    <div class="activity-title">Completed Practice Test</div>
-                                    <div class="activity-desc">Analogical Reasoning - Score: 92%</div>
-                                    <div class="activity-time">2 hours ago</div>
+                                    <div class="activity-title"><?php echo htmlspecialchars($activity['title']); ?></div>
+                                    <div class="activity-desc"><?php echo htmlspecialchars($activity['description']); ?></div>
+                                    <div class="activity-time"><?php echo $activity['time']; ?></div>
                                 </div>
                             </div>
-                            <div class="activity-item">
-                                <div class="activity-icon earned">
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Earned New Badge</div>
-                                    <div class="activity-desc">"Math Wizard" for solving 100 math problems</div>
-                                    <div class="activity-time">1 day ago</div>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon studied">
-                                    <i class="fas fa-book"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Studied New Topic</div>
-                                    <div class="activity-desc">Pattern Recognition - Advanced Level</div>
-                                    <div class="activity-time">2 days ago</div>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon test">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Took Final Assessment</div>
-                                    <div class="activity-desc">Overall Score: 87% - Great improvement!</div>
-                                    <div class="activity-time">3 days ago</div>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
@@ -363,45 +482,21 @@
                             <h3><i class="fas fa-flag me-2"></i>Upcoming Goals</h3>
                         </div>
                         <div class="upcoming-goals">
+                            <?php foreach($learning_goals as $goal): ?>
                             <div class="goal-card">
                                 <div class="goal-header">
-                                    <h6>Master Multiplication</h6>
-                                    <span class="goal-due">Due: 3 days</span>
+                                    <h6><?php echo htmlspecialchars($goal['goal_title']); ?></h6>
+                                    <span class="goal-due">Due: <?php echo $goal['due_date']; ?></span>
                                 </div>
-                                <p>Complete multiplication tables up to 12x12</p>
+                                <p><?php echo htmlspecialchars($goal['goal_description']); ?></p>
                                 <div class="goal-progress">
                                     <div class="progress">
-                                        <div class="progress-bar" style="width: 65%"></div>
+                                        <div class="progress-bar" style="width: <?php echo $goal['progress']; ?>%"></div>
                                     </div>
-                                    <span>65% complete</span>
+                                    <span><?php echo $goal['progress']; ?>% complete</span>
                                 </div>
                             </div>
-                            <div class="goal-card">
-                                <div class="goal-header">
-                                    <h6>Reading Challenge</h6>
-                                    <span class="goal-due">Due: 1 week</span>
-                                </div>
-                                <p>Read and comprehend 5 new storybooks</p>
-                                <div class="goal-progress">
-                                    <div class="progress">
-                                        <div class="progress-bar" style="width: 40%"></div>
-                                    </div>
-                                    <span>40% complete</span>
-                                </div>
-                            </div>
-                            <div class="goal-card">
-                                <div class="goal-header">
-                                    <h6>Science Project</h6>
-                                    <span class="goal-due">Due: 2 weeks</span>
-                                </div>
-                                <p>Complete plant growth observation experiment</p>
-                                <div class="goal-progress">
-                                    <div class="progress">
-                                        <div class="progress-bar" style="width: 20%"></div>
-                                    </div>
-                                    <span>20% complete</span>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>

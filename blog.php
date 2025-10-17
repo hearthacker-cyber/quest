@@ -1,4 +1,159 @@
-<!-- File: blog.php -->
+<?php
+session_start();
+
+// Database configuration
+$servername = "srv1837.hstgr.io";
+$username = "u329947844_quest";
+$password = "Ariharan@2025";
+$dbname = "u329947844_quest";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch featured posts
+function getFeaturedPosts($conn) {
+    $sql = "SELECT bp.*, bc.name as category_name, au.name as author_name 
+            FROM blog_posts bp 
+            LEFT JOIN blog_categories bc ON bp.category_id = bc.id 
+            LEFT JOIN admin_users au ON bp.author_id = au.id 
+            WHERE bp.is_featured = 1 AND bp.status = 'published' 
+            ORDER BY bp.created_at DESC 
+            LIMIT 3";
+    
+    $result = $conn->query($sql);
+    $posts = [];
+    
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $posts[] = $row;
+        }
+    }
+    
+    return $posts;
+}
+
+// Fetch all blog categories with post counts
+function getBlogCategories($conn) {
+    $sql = "SELECT bc.*, COUNT(bp.id) as post_count 
+            FROM blog_categories bc 
+            LEFT JOIN blog_posts bp ON bc.id = bp.category_id AND bp.status = 'published' 
+            WHERE bc.status = 'active' 
+            GROUP BY bc.id 
+            ORDER BY bc.name";
+    
+    $result = $conn->query($sql);
+    $categories = [];
+    
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row;
+        }
+    }
+    
+    return $categories;
+}
+
+// Fetch latest blog posts
+function getLatestPosts($conn, $limit = 6) {
+    $sql = "SELECT bp.*, bc.name as category_name, au.name as author_name 
+            FROM blog_posts bp 
+            LEFT JOIN blog_categories bc ON bp.category_id = bc.id 
+            LEFT JOIN admin_users au ON bp.author_id = au.id 
+            WHERE bp.status = 'published' 
+            ORDER BY bp.created_at DESC 
+            LIMIT ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $limit);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $posts = [];
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $posts[] = $row;
+        }
+    }
+    
+    return $posts;
+}
+
+// Search blog posts
+function searchBlogPosts($conn, $search_term) {
+    $sql = "SELECT bp.*, bc.name as category_name, au.name as author_name 
+            FROM blog_posts bp 
+            LEFT JOIN blog_categories bc ON bp.category_id = bc.id 
+            LEFT JOIN admin_users au ON bp.author_id = au.id 
+            WHERE bp.status = 'published' 
+            AND (bp.title LIKE ? OR bp.content LIKE ? OR bp.excerpt LIKE ?) 
+            ORDER BY bp.created_at DESC";
+    
+    $stmt = $conn->prepare($sql);
+    $search_pattern = "%$search_term%";
+    $stmt->bind_param("sss", $search_pattern, $search_pattern, $search_pattern);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $posts = [];
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $posts[] = $row;
+        }
+    }
+    
+    return $posts;
+}
+
+// Get category icon based on category name
+function getCategoryIcon($category_name) {
+    $icons = [
+        'Learning Strategies' => 'https://assets1.lottiefiles.com/packages/lf20_kuhijvxr.json',
+        'Parenting Tips' => 'https://assets1.lottiefiles.com/packages/lf20_5tkztbqk.json',
+        'Educational Technology' => 'https://assets1.lottiefiles.com/packages/lf20_ydo2agll.json',
+        'Student Success' => 'https://assets1.lottiefiles.com/packages/lf20_u8jpp9sc.json',
+        'Math Skills' => 'https://assets1.lottiefiles.com/packages/lf20_5tkztbqk.json',
+        'Reading' => 'https://assets1.lottiefiles.com/packages/lf20_kuhijvxr.json',
+        'STEM' => 'https://assets1.lottiefiles.com/packages/lf20_ydo2agll.json',
+        'Creativity' => 'https://assets1.lottiefiles.com/packages/lf20_u8jpp9sc.json',
+        'Collaboration' => 'https://assets1.lottiefiles.com/packages/lf20_5tkztbqk.json',
+        'Digital Learning' => 'https://assets1.lottiefiles.com/packages/lf20_ydo2agll.json'
+    ];
+    
+    return $icons[$category_name] ?? 'https://assets1.lottiefiles.com/packages/lf20_kuhijvxr.json';
+}
+
+// Get reading time from content
+function getReadingTime($content) {
+    $word_count = str_word_count(strip_tags($content));
+    $reading_time = ceil($word_count / 200); // Average reading speed: 200 words per minute
+    return max(1, $reading_time); // Minimum 1 minute
+}
+
+// Format date for display
+function formatBlogDate($date_string) {
+    return date('F j, Y', strtotime($date_string));
+}
+
+// Get data
+$featured_posts = getFeaturedPosts($conn);
+$categories = getBlogCategories($conn);
+$latest_posts = getLatestPosts($conn, 6);
+
+// Handle search
+$search_results = [];
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $search_term = $conn->real_escape_string($_GET['search']);
+    $search_results = searchBlogPosts($conn, $search_term);
+}
+
+// Close connection
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,12 +182,14 @@
                     <h1 class="blog-hero-title">QUEST <span style="color: var(--primary-yellow)">Blog</span></h1>
                     <p class="blog-hero-subtitle">Discover insights, tips, and strategies to enhance your child's learning journey with our educational resources.</p>
                     <div class="blog-search mt-4">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search articles...">
-                            <button class="btn btn-warning" type="button">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
+                        <form method="GET" action="">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="search" placeholder="Search articles..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                                <button class="btn btn-warning" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div class="col-lg-6 text-center" data-aos="fade-left" data-aos-delay="200">
@@ -52,6 +209,49 @@
         </div>
     </section>
 
+    <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+    <!-- Search Results Section -->
+    <section class="search-results py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4">Search Results for "<?php echo htmlspecialchars($_GET['search']); ?>"</h2>
+                    <?php if (!empty($search_results)): ?>
+                        <div class="row">
+                            <?php foreach($search_results as $post): ?>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="blog-post-card">
+                                    <div class="post-image">
+                                        <img src="<?php echo htmlspecialchars($post['featured_image']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
+                                    </div>
+                                    <div class="post-content">
+                                        <div class="post-category"><?php echo htmlspecialchars($post['category_name']); ?></div>
+                                        <h3><?php echo htmlspecialchars($post['title']); ?></h3>
+                                        <p><?php echo htmlspecialchars($post['excerpt']); ?></p>
+                                        <div class="post-meta">
+                                            <span><i class="far fa-user"></i> <?php echo htmlspecialchars($post['author_name']); ?></span>
+                                            <span><i class="far fa-calendar"></i> <?php echo formatBlogDate($post['created_at']); ?></span>
+                                        </div>
+                                        <a href="blog-post.php?id=<?php echo $post['id']; ?>" class="btn btn-primary mt-3">Read More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-5">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h4>No articles found</h4>
+                            <p>Try different keywords or browse our categories.</p>
+                            <a href="blog.php" class="btn btn-primary">View All Articles</a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php else: ?>
+
     <!-- Featured Posts Section -->
     <section class="featured-posts py-5">
         <div class="container">
@@ -62,57 +262,31 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="0">
-                    <div class="featured-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Critical Thinking">
-                            <div class="post-category">Learning Strategies</div>
-                        </div>
-                        <div class="post-content">
-                            <h3>5 Ways to Develop Critical Thinking in Children</h3>
-                            <p>Discover practical strategies to help your child develop essential critical thinking skills through everyday activities and games.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-calendar"></i> March 15, 2024</span>
-                                <span><i class="far fa-clock"></i> 5 min read</span>
+                <?php if (!empty($featured_posts)): ?>
+                    <?php foreach($featured_posts as $post): ?>
+                    <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?php echo $loop_index * 100; ?>">
+                        <div class="featured-post-card">
+                            <div class="post-image">
+                                <img src="<?php echo htmlspecialchars($post['featured_image']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
+                                <div class="post-category"><?php echo htmlspecialchars($post['category_name']); ?></div>
                             </div>
-                            <a href="#" class="btn btn-primary mt-3">Read More</a>
+                            <div class="post-content">
+                                <h3><?php echo htmlspecialchars($post['title']); ?></h3>
+                                <p><?php echo htmlspecialchars($post['excerpt']); ?></p>
+                                <div class="post-meta">
+                                    <span><i class="far fa-calendar"></i> <?php echo formatBlogDate($post['created_at']); ?></span>
+                                    <span><i class="far fa-clock"></i> <?php echo getReadingTime($post['content']); ?> min read</span>
+                                </div>
+                                <a href="blog-post.php?id=<?php echo $post['id']; ?>" class="btn btn-primary mt-3">Read More</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="featured-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Adaptive Learning">
-                            <div class="post-category">Technology</div>
-                        </div>
-                        <div class="post-content">
-                            <h3>The Power of Adaptive Learning Technology</h3>
-                            <p>How adaptive learning platforms are revolutionizing education by personalizing the learning experience for each student.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-calendar"></i> March 12, 2024</span>
-                                <span><i class="far fa-clock"></i> 7 min read</span>
-                            </div>
-                            <a href="#" class="btn btn-primary mt-3">Read More</a>
-                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-12 text-center">
+                        <p>No featured articles available at the moment.</p>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="featured-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1516627145497-ae69578cfc06?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Problem Solving">
-                            <div class="post-category">Parenting Tips</div>
-                        </div>
-                        <div class="post-content">
-                            <h3>Building Problem-Solving Skills Through Play</h3>
-                            <p>Learn how to transform playtime into valuable learning opportunities that develop strong problem-solving abilities.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-calendar"></i> March 8, 2024</span>
-                                <span><i class="far fa-clock"></i> 4 min read</span>
-                            </div>
-                            <a href="#" class="btn btn-primary mt-3">Read More</a>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
@@ -127,78 +301,32 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="0">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-                            <lottie-player 
-                                src="https://assets1.lottiefiles.com/packages/lf20_kuhijvxr.json" 
-                                background="transparent" 
-                                speed="1" 
-                                style="width: 80px; height: 80px;" 
-                                loop 
-                                autoplay>
-                            </lottie-player>
+                <?php if (!empty($categories)): ?>
+                    <?php foreach($categories as $category): ?>
+                    <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?php echo $loop_index * 100; ?>">
+                        <div class="category-card">
+                            <div class="category-icon">
+                                <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+                                <lottie-player 
+                                    src="<?php echo getCategoryIcon($category['name']); ?>" 
+                                    background="transparent" 
+                                    speed="1" 
+                                    style="width: 80px; height: 80px;" 
+                                    loop 
+                                    autoplay>
+                                </lottie-player>
+                            </div>
+                            <h4><?php echo htmlspecialchars($category['name']); ?></h4>
+                            <p><?php echo htmlspecialchars($category['description']); ?></p>
+                            <span class="post-count"><?php echo $category['post_count']; ?> Articles</span>
                         </div>
-                        <h4>Learning Strategies</h4>
-                        <p>Effective methods and techniques</p>
-                        <span class="post-count">12 Articles</span>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-                            <lottie-player 
-                                src="https://assets1.lottiefiles.com/packages/lf20_5tkztbqk.json" 
-                                background="transparent" 
-                                speed="1" 
-                                style="width: 80px; height: 80px;" 
-                                loop 
-                                autoplay>
-                            </lottie-player>
-                        </div>
-                        <h4>Parenting Tips</h4>
-                        <p>Guidance for parents</p>
-                        <span class="post-count">8 Articles</span>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-12 text-center">
+                        <p>No categories available.</p>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-                            <lottie-player 
-                                src="https://assets1.lottiefiles.com/packages/lf20_ydo2agll.json" 
-                                background="transparent" 
-                                speed="1" 
-                                style="width: 80px; height: 80px;" 
-                                loop 
-                                autoplay>
-                            </lottie-player>
-                        </div>
-                        <h4>Educational Technology</h4>
-                        <p>Tech tools and platforms</p>
-                        <span class="post-count">15 Articles</span>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-                            <lottie-player 
-                                src="https://assets1.lottiefiles.com/packages/lf20_u8jpp9sc.json" 
-                                background="transparent" 
-                                speed="1" 
-                                style="width: 80px; height: 80px;" 
-                                loop 
-                                autoplay>
-                            </lottie-player>
-                        </div>
-                        <h4>Student Success</h4>
-                        <p>Achievement stories</p>
-                        <span class="post-count">10 Articles</span>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
@@ -213,116 +341,40 @@
                 </div>
             </div>
             <div class="row">
-                <!-- Post 1 -->
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="0">
-                    <div class="blog-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Math Skills">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-category">Math Skills</div>
-                            <h3>Making Math Fun: Creative Approaches</h3>
-                            <p>Transform math from a chore into an exciting adventure with these creative teaching methods.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-user"></i> Dr. Sarah Johnson</span>
-                                <span><i class="far fa-calendar"></i> March 5, 2024</span>
+                <?php if (!empty($latest_posts)): ?>
+                    <?php foreach($latest_posts as $post): ?>
+                    <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?php echo $loop_index * 100; ?>">
+                        <div class="blog-post-card">
+                            <div class="post-image">
+                                <img src="<?php echo htmlspecialchars($post['featured_image']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
+                            </div>
+                            <div class="post-content">
+                                <div class="post-category"><?php echo htmlspecialchars($post['category_name']); ?></div>
+                                <h3><?php echo htmlspecialchars($post['title']); ?></h3>
+                                <p><?php echo htmlspecialchars($post['excerpt']); ?></p>
+                                <div class="post-meta">
+                                    <span><i class="far fa-user"></i> <?php echo htmlspecialchars($post['author_name']); ?></span>
+                                    <span><i class="far fa-calendar"></i> <?php echo formatBlogDate($post['created_at']); ?></span>
+                                </div>
+                                <a href="blog-post.php?id=<?php echo $post['id']; ?>" class="btn btn-primary mt-3">Read More</a>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Post 2 -->
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="blog-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Reading Habits">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-category">Reading</div>
-                            <h3>Cultivating a Love for Reading</h3>
-                            <p>How to help children develop strong reading habits that will benefit them throughout their lives.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-user"></i> Michael Chen</span>
-                                <span><i class="far fa-calendar"></i> March 1, 2024</span>
-                            </div>
-                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-12 text-center">
+                        <p>No articles available at the moment.</p>
                     </div>
-                </div>
-                <!-- Post 3 -->
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="blog-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Collaborative Learning">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-category">Collaboration</div>
-                            <h3>The Benefits of Collaborative Learning</h3>
-                            <p>Why working together helps students learn better and develop important social skills.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-user"></i> Emily Rodriguez</span>
-                                <span><i class="far fa-calendar"></i> February 25, 2024</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Post 4 -->
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="0">
-                    <div class="blog-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="STEM Education">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-category">STEM</div>
-                            <h3>Introducing STEM Concepts Early</h3>
-                            <p>Simple ways to introduce science, technology, engineering, and math concepts to young learners.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-user"></i> Dr. James Wilson</span>
-                                <span><i class="far fa-calendar"></i> February 20, 2024</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Post 5 -->
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="blog-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Creative Thinking">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-category">Creativity</div>
-                            <h3>Fostering Creative Thinking in Children</h3>
-                            <p>Activities and exercises that help children think outside the box and develop innovative solutions.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-user"></i> Lisa Thompson</span>
-                                <span><i class="far fa-calendar"></i> February 15, 2024</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Post 6 -->
-                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="blog-post-card">
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Digital Learning">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-category">Digital Learning</div>
-                            <h3>Balancing Screen Time and Learning</h3>
-                            <p>How to make the most of digital learning tools while maintaining healthy screen time habits.</p>
-                            <div class="post-meta">
-                                <span><i class="far fa-user"></i> Robert Martinez</span>
-                                <span><i class="far fa-calendar"></i> February 10, 2024</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
             <div class="row">
                 <div class="col-12 text-center" data-aos="fade-up">
-                    <a href="#" class="btn btn-primary btn-lg">Load More Articles</a>
+                    <a href="blog-archive.php" class="btn btn-primary btn-lg">View All Articles</a>
                 </div>
             </div>
         </div>
     </section>
+    <?php endif; ?>
 
     <!-- Newsletter Section -->
     <section class="newsletter-section py-5">
@@ -345,11 +397,13 @@
                 </div>
                 <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
                     <div class="newsletter-form">
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control" placeholder="Enter your email address">
-                            <button class="btn btn-warning" type="button">Subscribe</button>
-                        </div>
-                        <p class="text-muted small">By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.</p>
+                        <form id="newsletterForm">
+                            <div class="input-group mb-3">
+                                <input type="email" class="form-control" placeholder="Enter your email address" required>
+                                <button class="btn btn-warning" type="submit">Subscribe</button>
+                            </div>
+                            <p class="text-muted small">By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.</p>
+                        </form>
                     </div>
                 </div>
             </div>

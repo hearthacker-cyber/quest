@@ -26,8 +26,116 @@
     <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap5.min.css" rel="stylesheet">
     
-    <!-- Custom Parents CSS -->
-    <link href="assets/css/parents-custom.css" rel="stylesheet" type="text/css">
+    <!-- Custom Users CSS -->
+    <link href="assets/css/admin-users.css" rel="stylesheet" type="text/css">
+    
+    <style>
+        .parent-stat-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .parent-stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .parent-stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .parent-badge {
+            background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .child-count-badge {
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .action-buttons .btn {
+            border-radius: 8px;
+            padding: 6px 12px;
+            margin: 2px;
+        }
+        
+        .parent-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .parent-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .parent-avatar {
+            width: 80px;
+            height: 80px;
+            border: 4px solid #fff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .children-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .children-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .children-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .child-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .quick-action-btn {
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 
 <body data-sidebar="colored">
@@ -62,22 +170,23 @@
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="#">Foxia</a></li>
                                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                                <li class="breadcrumb-item"><a href="admin/users.php">User Management</a></li>
+                                <li class="breadcrumb-item"><a href="users.php">All Users</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">Manage Parents</li>
                             </ol>
                         </div>
                         <div class="col-md-4">
                             <div class="float-end d-none d-md-block">
                                 <div class="dropdown">
-                                    <button class="btn btn-primary btn-rounded dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-users me-1"></i> Parent Tools <i class="mdi mdi-chevron-down"></i>
+                                    <button class="btn btn-warning btn-rounded dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user-friends me-1"></i> Parent Tools <i class="mdi mdi-chevron-down"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item" href="admin/parents.php?action=add"><i class="fas fa-user-plus me-2"></i> Add New Parent</a>
-                                        <a class="dropdown-item" href="#"><i class="fas fa-link me-2"></i> Link Students</a>
-                                        <a class="dropdown-item" href="#"><i class="fas fa-file-import me-2"></i> Import Parents</a>
+                                        <a class="dropdown-item" href="add_parent.php"><i class="fas fa-user-plus me-2"></i> Add New Parent</a>
+                                        <a class="dropdown-item" href="assign_student.php"><i class="fas fa-link me-2"></i> Assign Student</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-file-export me-2"></i> Export Parents</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-envelope me-2"></i> Send Bulk Email</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#"><i class="fas fa-chart-bar me-2"></i> Parent Analytics</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-question-circle me-2"></i> Parent Guide</a>
                                     </div>
                                 </div>
                             </div>
@@ -92,17 +201,26 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
-                                        <h4 class="mb-0 parent-stat-number">450</h4>
+                                        <?php
+                                        // Include config
+                                        include('config.php');
+                                        
+                                        // Get total parents count
+                                        $stmt = $conn->prepare("SELECT COUNT(*) as total_parents FROM users WHERE role = 'parent'");
+                                        $stmt->execute();
+                                        $total_parents = $stmt->fetch()['total_parents'];
+                                        ?>
+                                        <h4 class="mb-0 user-stat-number"><?php echo $total_parents; ?></h4>
                                         <p class="text-muted mb-0">Total Parents</p>
                                     </div>
                                     <div class="flex-shrink-0">
-                                        <div class="parent-stat-icon bg-primary">
-                                            <i class="fas fa-users"></i>
+                                        <div class="parent-stat-icon" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                                            <i class="fas fa-user-friends"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mt-3">
-                                    <span class="badge bg-success"><i class="fas fa-arrow-up me-1"></i> 8%</span>
+                                    <span class="badge bg-success"><i class="fas fa-arrow-up me-1"></i> 15%</span>
                                     <span class="text-muted ms-2">From last month</span>
                                 </div>
                             </div>
@@ -113,17 +231,21 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
-                                        <h4 class="mb-0 parent-stat-number">380</h4>
+                                        <?php
+                                        // Get active parents count
+                                        $active_parents = $total_parents; // Assuming all are active for now
+                                        ?>
+                                        <h4 class="mb-0 user-stat-number"><?php echo $active_parents; ?></h4>
                                         <p class="text-muted mb-0">Active Parents</p>
                                     </div>
                                     <div class="flex-shrink-0">
-                                        <div class="parent-stat-icon bg-success">
+                                        <div class="parent-stat-icon" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">
                                             <i class="fas fa-user-check"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mt-3">
-                                    <span class="badge bg-success"><i class="fas fa-arrow-up me-1"></i> 5%</span>
+                                    <span class="badge bg-success"><i class="fas fa-arrow-up me-1"></i> 10%</span>
                                     <span class="text-muted ms-2">From last month</span>
                                 </div>
                             </div>
@@ -134,17 +256,21 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
-                                        <h4 class="mb-0 parent-stat-number">2.3</h4>
-                                        <p class="text-muted mb-0">Avg. Students/Parent</p>
+                                        <?php
+                                        // Get parents with multiple children count (sample data)
+                                        $parents_with_multiple_children = rand(5, 15);
+                                        ?>
+                                        <h4 class="mb-0 user-stat-number"><?php echo $parents_with_multiple_children; ?></h4>
+                                        <p class="text-muted mb-0">Multiple Children</p>
                                     </div>
                                     <div class="flex-shrink-0">
-                                        <div class="parent-stat-icon bg-info">
-                                            <i class="fas fa-user-graduate"></i>
+                                        <div class="parent-stat-icon" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);">
+                                            <i class="fas fa-users"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mt-3">
-                                    <span class="badge bg-success"><i class="fas fa-arrow-up me-1"></i> 0.2</span>
+                                    <span class="badge bg-info"><i class="fas fa-arrow-up me-1"></i> 8%</span>
                                     <span class="text-muted ms-2">From last month</span>
                                 </div>
                             </div>
@@ -155,17 +281,21 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1">
-                                        <h4 class="mb-0 parent-stat-number">320</h4>
-                                        <p class="text-muted mb-0">With Active Plan</p>
+                                        <?php
+                                        // Get suspended parents count
+                                        $suspended_parents = 0; // Assuming none for now
+                                        ?>
+                                        <h4 class="mb-0 user-stat-number"><?php echo $suspended_parents; ?></h4>
+                                        <p class="text-muted mb-0">Suspended</p>
                                     </div>
                                     <div class="flex-shrink-0">
-                                        <div class="parent-stat-icon bg-warning">
-                                            <i class="fas fa-id-card"></i>
+                                        <div class="parent-stat-icon" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                                            <i class="fas fa-user-slash"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mt-3">
-                                    <span class="badge bg-success"><i class="fas fa-arrow-up me-1"></i> 12%</span>
+                                    <span class="badge bg-danger"><i class="fas fa-arrow-down me-1"></i> 2%</span>
                                     <span class="text-muted ms-2">From last month</span>
                                 </div>
                             </div>
@@ -173,46 +303,74 @@
                     </div>
                 </div>
 
+                <!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-bolt me-2 text-warning"></i> Quick Actions
+                </h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="add_parent.php" class="btn btn-warning quick-action-btn">
+                        <i class="fas fa-user-plus me-2"></i> Add New Parent
+                    </a>
+                    <a href="assign_student.php" class="btn btn-info quick-action-btn">
+                        <i class="fas fa-link me-2"></i> Assign Student to Parent
+                    </a>
+                    <a href="send_bulk_message.php" class="btn btn-success quick-action-btn">
+                        <i class="fas fa-envelope me-2"></i> Send Bulk Message
+                    </a>
+                    <a href="export_parents.php" class="btn btn-primary quick-action-btn">
+                        <i class="fas fa-download me-2"></i> Export Parents List
+                    </a>
+                    <a href="admin-all-users.php" class="btn btn-outline-secondary quick-action-btn">
+                        <i class="fas fa-users me-2"></i> View All Users
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
                 <!-- Filters and Search Section -->
-                <div class="row">
+                <div class="row mb-4">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="mt-0 header-title mb-4">Parent Filters & Search</h4>
+                                <h4 class="mt-0 header-title mb-4">Filters & Search</h4>
                                 
                                 <div class="row g-3">
                                     <div class="col-xl-4 col-md-6">
                                         <div class="search-box">
-                                            <input type="text" class="form-control" id="parentsSearch" placeholder="Search parents...">
+                                            <input type="text" class="form-control" id="parentsSearch" placeholder="Search parents by name or email...">
                                             <i class="fas fa-search search-icon"></i>
                                         </div>
                                     </div>
-                                    <div class="col-xl-3 col-md-6">
-                                        <select class="form-select" id="subscriptionFilter">
-                                            <option value="">All Subscription Plans</option>
-                                            <option value="premium">Premium Plan</option>
-                                            <option value="basic">Basic Plan</option>
-                                            <option value="family">Family Plan</option>
-                                            <option value="trial">Trial Period</option>
-                                            <option value="none">No Active Plan</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-xl-3 col-md-6">
-                                        <select class="form-select" id="studentsFilter">
-                                            <option value="">All Student Counts</option>
-                                            <option value="1">1 Student</option>
-                                            <option value="2">2 Students</option>
-                                            <option value="3">3+ Students</option>
-                                            <option value="0">No Students</option>
+                                    <div class="col-xl-2 col-md-6">
+                                        <select class="form-select" id="childrenFilter">
+                                            <option value="">Children Count</option>
+                                            <option value="0">No Children</option>
+                                            <option value="1">1 Child</option>
+                                            <option value="2">2 Children</option>
+                                            <option value="3">3+ Children</option>
                                         </select>
                                     </div>
                                     <div class="col-xl-2 col-md-6">
-                                        <div class="d-grid gap-2 d-md-flex">
-                                            <button type="button" class="btn btn-primary" id="applyFilters">
-                                                <i class="fas fa-filter me-1"></i> Apply
-                                            </button>
-                                            <button type="button" class="btn btn-outline-secondary" id="clearFilters">
-                                                <i class="fas fa-times me-1"></i> Clear
+                                        <select class="form-select" id="statusFilter">
+                                            <option value="">All Status</option>
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                            <option value="suspended">Suspended</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xl-2 col-md-6">
+                                        <input type="date" class="form-control" id="dateFromFilter" placeholder="From Date">
+                                    </div>
+                                    <div class="col-xl-2 col-md-6">
+                                        <div class="d-grid">
+                                            <button type="button" class="btn btn-warning" id="applyFilters">
+                                                <i class="fas fa-filter me-1"></i> Apply Filters
                                             </button>
                                         </div>
                                     </div>
@@ -221,18 +379,15 @@
                                 <div class="row mt-3">
                                     <div class="col-12">
                                         <div class="d-flex flex-wrap gap-2 align-items-center">
-                                            <span class="text-muted">Quick Actions:</span>
-                                            <button class="btn btn-outline-primary btn-sm" id="refreshTable">
-                                                <i class="fas fa-sync-alt me-1"></i> Refresh
+                                            <span class="text-muted">Quick Filters:</span>
+                                            <button class="btn btn-outline-primary btn-sm" id="showAll">
+                                                <i class="fas fa-list me-1"></i> Show All
                                             </button>
-                                            <button class="btn btn-outline-success btn-sm" id="exportParents">
-                                                <i class="fas fa-file-export me-1"></i> Export
+                                            <button class="btn btn-outline-success btn-sm" id="showActive">
+                                                <i class="fas fa-user-check me-1"></i> Active Only
                                             </button>
-                                            <button class="btn btn-outline-info btn-sm" id="printTable">
-                                                <i class="fas fa-print me-1"></i> Print
-                                            </button>
-                                            <button class="btn btn-outline-warning btn-sm" id="sendBulkMessage">
-                                                <i class="fas fa-envelope me-1"></i> Message All
+                                            <button class="btn btn-outline-warning btn-sm" id="showNoChildren">
+                                                <i class="fas fa-user-times me-1"></i> No Children
                                             </button>
                                         </div>
                                     </div>
@@ -242,33 +397,12 @@
                     </div>
                 </div>
 
-                <!-- Bulk Actions Bar -->
-                <div class="bulk-actions-bar" id="bulkActionsBar">
-                    <div class="d-flex align-items-center">
-                        <span class="me-3"><strong id="selectedCount">0</strong> parents selected</span>
-                        <div class="btn-group me-3">
-                            <button type="button" class="btn btn-outline-success btn-sm">
-                                <i class="fas fa-envelope me-1"></i> Send Message
-                            </button>
-                            <button type="button" class="btn btn-outline-info btn-sm">
-                                <i class="fas fa-link me-1"></i> Link Students
-                            </button>
-                            <button type="button" class="btn btn-outline-warning btn-sm">
-                                <i class="fas fa-user-slash me-1"></i> Deactivate
-                            </button>
-                        </div>
-                        <button type="button" class="btn btn-outline-danger btn-sm" id="clearSelection">
-                            <i class="fas fa-times me-1"></i> Clear Selection
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Parents Table -->
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="mt-0 header-title mb-4">Manage Parents</h4>
+                                <h4 class="mt-0 header-title mb-4">All Parents</h4>
                                 
                                 <div class="table-responsive">
                                     <table id="parents-datatable" class="table table-hover table-centered dt-responsive nowrap w-100">
@@ -280,303 +414,95 @@
                                                     </div>
                                                 </th>
                                                 <th>Parent ID</th>
-                                                <th>Name</th>
+                                                <th>Parent Name</th>
                                                 <th>Email</th>
-                                                <th>Linked Student(s)</th>
-                                                <th>Subscription Plan</th>
+                                                <th>Children</th>
+                                                <th>Status</th>
+                                                <th>Last Login</th>
+                                                <th>Registered On</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- Sample Data - Replace with dynamic data from your backend -->
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#PAR001</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Rajesh+Sharma&background=4361ee&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Rajesh Sharma</h6>
-                                                            <small class="text-muted">Father</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>rajesh.sharma@example.com</td>
-                                                <td>
-                                                    <div class="student-chips">
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Rahul+Sharma&background=4cc9f0&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Rahul Sharma (Grade 10)
-                                                        </span>
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Neha+Sharma&background=f72585&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Neha Sharma (Grade 8)
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-primary">Family Plan</span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" title="View Linked Students">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit Parent">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Manage Subscription">
-                                                            <i class="fas fa-id-card"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Parent">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#PAR002</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Sunita+Patel&background=4cc9f0&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Sunita Patel</h6>
-                                                            <small class="text-muted">Mother</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>sunita.patel@example.com</td>
-                                                <td>
-                                                    <div class="student-chips">
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Priya+Patel&background=7209b7&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Priya Patel (Grade 11)
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-success">Premium Plan</span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" title="View Linked Students">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit Parent">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Manage Subscription">
-                                                            <i class="fas fa-id-card"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Parent">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#PAR003</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Vikram+Singh&background=f72585&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Vikram Singh</h6>
-                                                            <small class="text-muted">Father</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>vikram.singh@example.com</td>
-                                                <td>
-                                                    <div class="student-chips">
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Arjun+Singh&background=f8961e&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Arjun Singh (Grade 9)
-                                                        </span>
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Karan+Singh&background=43aa8b&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Karan Singh (Grade 7)
-                                                        </span>
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Simran+Singh&background=9c27b0&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Simran Singh (Grade 6)
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-primary">Family Plan</span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" title="View Linked Students">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit Parent">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Manage Subscription">
-                                                            <i class="fas fa-id-card"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Parent">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#PAR004</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Anita+Gupta&background=7209b7&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Anita Gupta</h6>
-                                                            <small class="text-muted">Mother</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>anita.gupta@example.com</td>
-                                                <td>
-                                                    <div class="student-chips">
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Rohan+Gupta&background=4361ee&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Rohan Gupta (Grade 12)
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-warning text-dark">Basic Plan</span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" title="View Linked Students">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit Parent">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Manage Subscription">
-                                                            <i class="fas fa-id-card"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Parent">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#PAR005</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Sanjay+Mehta&background=f8961e&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Sanjay Mehta</h6>
-                                                            <small class="text-muted">Father</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>sanjay.mehta@example.com</td>
-                                                <td>
-                                                    <div class="student-chips">
-                                                        <span class="text-muted">No students linked</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-secondary">No Plan</span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" title="View Linked Students">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit Parent">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Manage Subscription">
-                                                            <i class="fas fa-id-card"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Parent">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input row-checkbox" type="checkbox">
-                                                    </div>
-                                                </td>
-                                                <td>#PAR006</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Pooja+Reddy&background=43aa8b&color=fff" alt="" class="rounded-circle me-2" width="32" height="32">
-                                                        <div>
-                                                            <h6 class="mb-0">Pooja Reddy</h6>
-                                                            <small class="text-muted">Mother</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>pooja.reddy@example.com</td>
-                                                <td>
-                                                    <div class="student-chips">
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Aditya+Reddy&background=9c27b0&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Aditya Reddy (Grade 8)
-                                                        </span>
-                                                        <span class="student-chip">
-                                                            <img src="https://ui-avatars.com/api/?name=Divya+Reddy&background=4361ee&color=fff" alt="" class="rounded-circle me-1" width="16" height="16">
-                                                            Divya Reddy (Grade 10)
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-info">Trial Period</span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" title="View Linked Students">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit Parent">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Manage Subscription">
-                                                            <i class="fas fa-id-card"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Parent">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                            <?php
+                                            // Fetch all parents from database
+                                            try {
+                                                $stmt = $conn->prepare("SELECT id, name, email, role, created_at, updated_at FROM users WHERE role = 'parent' ORDER BY created_at DESC");
+                                                $stmt->execute();
+                                                $parents = $stmt->fetchAll();
+                                                
+                                                if (count($parents) > 0) {
+                                                    foreach ($parents as $parent) {
+                                                        // Generate avatar based on name
+                                                        $avatar_url = "https://ui-avatars.com/api/?name=" . urlencode($parent['name']) . "&background=f39c12&color=fff";
+                                                        
+                                                        // Format dates
+                                                        $registered_date = date('d M Y', strtotime($parent['created_at']));
+                                                        $last_login = date('d M Y', strtotime($parent['updated_at']));
+                                                        
+                                                        // Determine status (for now, all are active)
+                                                        $status = "Active";
+                                                        $status_badge = "bg-success";
+                                                        
+                                                        // Generate random children count for demonstration
+                                                        $children_count = rand(0, 3);
+                                                        $children_text = $children_count == 0 ? "No children" : ($children_count == 1 ? "1 child" : "$children_count children");
+                                                        
+                                                        echo '
+                                                        <tr>
+                                                            <td>
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input row-checkbox" type="checkbox" value="' . $parent['id'] . '">
+                                                                </div>
+                                                            </td>
+                                                            <td>#PAR' . str_pad($parent['id'], 3, '0', STR_PAD_LEFT) . '</td>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <img src="' . $avatar_url . '" alt="" class="rounded-circle me-2" width="32" height="32">
+                                                                    <div>
+                                                                        <h6 class="mb-0">' . htmlspecialchars($parent['name']) . '</h6>
+                                                                        <small class="text-muted">Parent Account</small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>' . htmlspecialchars($parent['email']) . '</td>
+                                                            <td>
+                                                                <span class="badge bg-info">' . $children_text . '</span>
+                                                                ' . ($children_count > 0 ? '<span class="child-count-badge">' . $children_count . '</span>' : '') . '
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge ' . $status_badge . '">' . $status . '</span>
+                                                            </td>
+                                                            <td>' . $last_login . '</td>
+                                                            <td>' . $registered_date . '</td>
+                                                            <td>
+                                                                <div class="btn-group btn-group-sm" role="group">
+                                                                    <a href="view_parent.php?id=' . $parent['id'] . '" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Parent Profile">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </a>
+                                                                    <a href="edit_parent.php?id=' . $parent['id'] . '" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Edit Parent">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                    <a href="assign_student.php?parent_id=' . $parent['id'] . '" class="btn btn-outline-info" data-bs-toggle="tooltip" title="Assign Student">
+                                                                        <i class="fas fa-link"></i>
+                                                                    </a>
+                                                                    <a href="suspend_parent.php?id=' . $parent['id'] . '" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Suspend Parent" onclick="return confirm(\'Are you sure you want to suspend this parent?\')">
+                                                                        <i class="fas fa-user-slash"></i>
+                                                                    </a>
+                                                                    <a href="delete_parent.php?id=' . $parent['id'] . '" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Parent" onclick="return confirm(\'Are you sure you want to delete this parent? This action cannot be undone.\')">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>';
+                                                    }
+                                                } else {
+                                                    echo '<tr><td colspan="9" class="text-center">No parents found.</td></tr>';
+                                                }
+                                            } catch (PDOException $e) {
+                                                echo '<tr><td colspan="9" class="text-center text-danger">Error fetching parents: ' . $e->getMessage() . '</td></tr>';
+                                            }
+                                            ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -602,7 +528,7 @@
     <!-- END layout-wrapper -->
 
     <!-- Right Sidebar -->
- 
+  
     <!-- /Right-bar -->
 
     <!-- Right bar overlay-->
@@ -624,7 +550,66 @@
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap5.min.js"></script>
 
     <!-- Custom Parents JS -->
-    <script src="assets/js/admin-users-parents.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            var table = $('#parents-datatable').DataTable({
+                responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                pageLength: 10,
+                language: {
+                    paginate: {
+                        previous: "<i class='fas fa-chevron-left'></i>",
+                        next: "<i class='fas fa-chevron-right'></i>"
+                    }
+                },
+                drawCallback: function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                }
+            });
+            
+            // Select All checkbox functionality
+            $('#selectAll').on('click', function() {
+                $('.row-checkbox').prop('checked', this.checked);
+            });
+            
+            // Apply filters
+            $('#applyFilters').on('click', function() {
+                var searchValue = $('#parentsSearch').val();
+                var childrenValue = $('#childrenFilter').val();
+                var statusValue = $('#statusFilter').val();
+                
+                // Combine filters
+                table.column(4).search(childrenValue).draw(); // Children column
+                table.column(5).search(statusValue).draw(); // Status column
+                table.search(searchValue).draw();
+            });
+            
+            // Quick filter buttons
+            $('#showAll').on('click', function() {
+                table.search('').columns().search('').draw();
+            });
+            
+            $('#showActive').on('click', function() {
+                table.column(5).search('Active').draw();
+            });
+            
+            $('#showNoChildren').on('click', function() {
+                table.column(4).search('0').draw();
+            });
+            
+            // Refresh table
+            $('#refreshTable').on('click', function() {
+                location.reload();
+            });
+            
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
 
     <script src="assets/js/app.js"></script>
 
